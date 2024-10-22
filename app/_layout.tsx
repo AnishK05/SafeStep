@@ -1,9 +1,24 @@
-import { Stack } from "expo-router";
+import React, { ReactNode } from 'react';
+import { View, StyleSheet } from 'react-native';
 
-export default function RootLayout() {
+// Define the type for the props, specifying that 'children' is a ReactNode
+type LayoutProps = {
+  children: ReactNode;
+};
+
+const Layout = ({ children }: LayoutProps) => {
   return (
-    <Stack>
-      <Stack.Screen name="index" />
-    </Stack>
+    <View style={styles.container}>
+      {children}
+    </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+});
+
+export default Layout;
