@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
+import { View, StyleSheet, Button, Text, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { getDirections } from '../../utils/directionsService';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList, RouteScreenRouteProp } from '../../navigation/navigationTypes'; // Import types
+import { Ionicons } from '@expo/vector-icons';
 
 type Coordinates = {
   latitude: number;
@@ -40,6 +41,15 @@ const RouteScreen = () => {
 
   return (
     <View style={styles.container}>
+
+      {/* Custom Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color="white" />
+      </TouchableOpacity>
+
+      {/* RouteScreen Content */}
+      <Text style={styles.screenTitle}>Route Preview</Text>
+      
       <MapView
         style={styles.map}
         region={{
@@ -53,7 +63,12 @@ const RouteScreen = () => {
         {destination && <Marker coordinate={destination} />}
         {routeCoords.length > 0 && <Polyline coordinates={routeCoords} strokeWidth={8} strokeColor='blue' />}
       </MapView>
-      <Button title="Start Navigation" onPress={handleStartNavigation} />
+
+      {/* Custom Styled Button */}
+      <TouchableOpacity style={styles.startNavigationButton} onPress={handleStartNavigation}>
+        <Text style={styles.startNavigationButtonText}>Start Navigation</Text>
+      </TouchableOpacity>
+    
     </View>
   );
 };
@@ -62,9 +77,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 5,
+    backgroundColor: '#f5f5f5',
   },
   map: {
     flex: 1,
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'black',
+    borderRadius: 50, // Rounded button
+    width: 40, // Adjust width to make it square
+    height: 40, // Adjust height to make it square
+    margin: 10, // Space around the button
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },  
+  screenTitle: {
+    fontSize: 24,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  startNavigationButton: {
+    backgroundColor: '#2a4a8b', // Custom background color
+    paddingVertical: 15,
+    paddingTop: 15,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 50, 
+  },
+  startNavigationButtonText: {
+    color: '#fff', // White text color
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

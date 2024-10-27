@@ -11,7 +11,11 @@ const Stack = createStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false, // Disable the default header for all screens
+        }}
+      >
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Route" component={RouteScreen} />
         <Stack.Screen name="StartNavigation" component={StartNavigationScreen} />

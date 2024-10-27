@@ -8,6 +8,8 @@ import { Magnetometer } from 'expo-sensors';
 import * as Speech from 'expo-speech';
 import { debounce } from 'lodash';
 import { Ionicons } from '@expo/vector-icons'; // Import icons for the toggle button
+import { useNavigation } from '@react-navigation/native';
+
 
 type Coordinates = {
   latitude: number;
@@ -17,6 +19,7 @@ type Coordinates = {
 const screenWidth = Dimensions.get('window').width;
 
 const FirstPersonNavigationScreen = () => {
+  const navigation = useNavigation();
   const route = useRoute();
   const { currentLocation, destination } = route.params as {
     currentLocation: Coordinates;
@@ -235,6 +238,15 @@ const FirstPersonNavigationScreen = () => {
 
   return (
     <View style={styles.container}>
+
+      {/* Custom Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color="white" />
+      </TouchableOpacity>
+
+      {/*StartNavigationScreen Content */}
+      <Text style={styles.screenTitle}>Navigation Screen</Text>
+
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -294,13 +306,14 @@ const FirstPersonNavigationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 60,
   },
   map: {
     flex: 1,
   },
   directionsOverlay: {
     position: 'absolute',
-    top: 10,
+    top: 160,
     width: screenWidth - 20,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     padding: 10,
@@ -332,6 +345,25 @@ const styles = StyleSheet.create({
   recenterButtonText: {
     color: '#fff',
     fontSize: 14,
+    fontWeight: 'bold',
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'black',
+    borderRadius: 50, // Rounded button
+    width: 40, // Adjust width to make it square
+    height: 40, // Adjust height to make it square
+    marginLeft: 10, // Space around the button
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  }, 
+  screenTitle: {
+    fontSize: 24,
+    textAlign: 'center',
     fontWeight: 'bold',
   },
 });
