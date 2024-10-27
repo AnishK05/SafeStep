@@ -6,7 +6,7 @@ import { useRoute } from '@react-navigation/native';
 import { LocationObject, watchPositionAsync, Accuracy } from 'expo-location';
 import { Magnetometer } from 'expo-sensors';
 import * as Speech from 'expo-speech';
-import { throttle, debounce } from 'lodash';
+import { debounce } from 'lodash';
 import { Ionicons } from '@expo/vector-icons'; // Import icons for the toggle button
 
 type Coordinates = {
@@ -39,7 +39,7 @@ const FirstPersonNavigationScreen = () => {
     latitude: currentLocation.latitude,
     longitude: currentLocation.longitude,
     latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
+    longitudeDelta: 0.01
   };
 
   // Helper function to remove HTML tags
@@ -63,35 +63,29 @@ const FirstPersonNavigationScreen = () => {
     return R * c; // Distance in meters
   };
 
-  const updateCamera = useCallback(
-    throttle((newLocation: Coordinates, heading: number) => {
-      if (mapRef.current) {
-        mapRef.current.animateCamera(
-          {
-            center: newLocation,
-            pitch: 45, // 3D pitch view
-            heading: heading, // Keep the camera aligned with device heading
-            zoom: 17, // Closer zoom for 3D effect
-          },
-          { duration: 300 }
-        );
-      }
-    }, 2000), // Throttle updates to trigger once every 2 seconds
-    []
-  );
+  // Manual camera re-centering function
+  const recenterCamera = () => {
+    if (mapRef.current) {
+      mapRef.current.animateCamera(
+        {
+          center: userLocation,
+          pitch: 45, // Optional 3D pitch
+          heading: 0, // Face North
+          zoom: 17,
+        },
+        { duration: 500 }
+      );
+    }
+  };
 
-  const speakDirection = async (stepIndex: number) => {
+  const speakDirection = (stepIndex: number) => {
     if (voiceEnabled && directions[stepIndex]) {
       try {
         const cleanText = stripHtmlTags(directions[stepIndex]);
-        const isSpeaking = await Speech.isSpeakingAsync();
-        if (isSpeaking) {
-          Speech.stop(); // Stop any ongoing speech
-        }
         Speech.speak(cleanText, {
-          language: 'en',
+          language: 'en-US',
           pitch: 1.0,
-          rate: 1.0,
+          rate: 1.0
         });
       } catch (error) {
         console.error('Error with speech:', error);
@@ -101,16 +95,71 @@ const FirstPersonNavigationScreen = () => {
 
   // Function to check if the user is close enough to the next step
   const checkProximityToStep = (location: Coordinates) => {
-    if (currentStep < routeCoords.length) {
-      const nextStep = routeCoords[currentStep];
-      const distanceToNextStep = calculateDistance(location, nextStep);
+    let closestStep = currentStep;
+    let minDistance = Number.MAX_SAFE_INTEGER;
+    let userOnCorrectPath = false;
 
-      // If the user is within 20 meters of the next step, advance to the next step
-      if (distanceToNextStep < 20) {
-        setCurrentStep((prevStep) => prevStep + 1);
-        speakDirection(currentStep);
+    // Iterate through route segments to find the closest
+    for (let i = currentStep; i < routeCoords.length - 1; i++) {
+      const segmentStart = routeCoords[i];
+      const segmentEnd = routeCoords[i + 1];
+      
+      // Calculate the perpendicular distance from the user to the route segment
+      const distanceToSegment = calculateDistanceToSegment(location, segmentStart, segmentEnd);
+
+      if (distanceToSegment < minDistance) {
+        minDistance = distanceToSegment;
+        closestStep = i;
+        
+        // Check if the user is heading in the correct direction along this segment
+        if (isHeadingCorrect(location, segmentStart, segmentEnd)) {
+          userOnCorrectPath = true;
+        }
       }
     }
+
+    // If the user is close enough to the closest segment and heading correctly, update the step
+    if (minDistance < 20 || userOnCorrectPath) {
+      setCurrentStep(closestStep + 1);
+      speakDirection(closestStep + 1);
+    }
+  };
+
+  // Helper function to calculate the perpendicular distance to a segment
+  const calculateDistanceToSegment = (location: Coordinates, start: Coordinates, end: Coordinates): number => {
+    const x0 = location.latitude;
+    const y0 = location.longitude;
+    const x1 = start.latitude;
+    const y1 = start.longitude;
+    const x2 = end.latitude;
+    const y2 = end.longitude;
+
+    const numerator = Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1);
+    const denominator = Math.sqrt((y2 - y1) ** 2 + (x2 - x1) ** 2);
+
+    return numerator / denominator;
+  };
+
+  // Helper function to check if the user is heading in the correct direction
+  const isHeadingCorrect = (location: Coordinates, segmentStart: Coordinates, segmentEnd: Coordinates): boolean => {
+    const desiredHeading = calculateBearing(segmentStart, segmentEnd);
+    const currentHeading = calculateBearing(location, segmentEnd);
+    
+    // Check if the current heading is within a tolerance range of the desired heading
+    const tolerance = 20; // Degrees tolerance
+    return Math.abs(desiredHeading - currentHeading) <= tolerance;
+  };
+
+  // Helper function to calculate the bearing between two points
+  const calculateBearing = (start: Coordinates, end: Coordinates): number => {
+    const lat1 = start.latitude * (Math.PI / 180);
+    const lat2 = end.latitude * (Math.PI / 180);
+    const deltaLong = (end.longitude - start.longitude) * (Math.PI / 180);
+
+    const y = Math.sin(deltaLong) * Math.cos(lat2);
+    const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLong);
+
+    return (Math.atan2(y, x) * 180) / Math.PI;
   };
 
   useEffect(() => {
@@ -130,7 +179,6 @@ const FirstPersonNavigationScreen = () => {
           if (calculateDistance(lastKnownLocation.current, newLocation) > 5) {
             setUserLocation(newLocation);
             lastKnownLocation.current = newLocation;
-            updateCamera(newLocation, heading);
 
             // Check if user is near the next navigation step
             checkProximityToStep(newLocation);
@@ -158,6 +206,7 @@ const FirstPersonNavigationScreen = () => {
         const steps = route.legs[0].steps.map((step: any) => stripHtmlTags(step.html_instructions));
         setRouteCoords(coords);
         setDirections(steps);
+        Speech.speak(steps[0]);
       }).catch(error => {
         console.error('Error fetching directions:', error);
       });
@@ -190,7 +239,7 @@ const FirstPersonNavigationScreen = () => {
         ref={mapRef}
         style={styles.map}
         showsUserLocation={true}
-        followsUserLocation={true}
+        followsUserLocation={false} // Disable auto-following
         pitchEnabled={true}
         rotateEnabled={true}
         zoomEnabled={true}
@@ -214,6 +263,18 @@ const FirstPersonNavigationScreen = () => {
           {directions[currentStep] || 'You have reached your destination!'}
         </Text>
       </View>
+
+      {/* Recenter Button */}
+      <TouchableOpacity
+        style={styles.recenterButton}
+        onPress={recenterCamera}
+      >
+        <Ionicons
+          name="navigate-outline" // Use the navigate icon for re-centering
+          size={24}
+          color="#fff"
+        />
+      </TouchableOpacity>
 
       {/* Voice Toggle Icon */}
       <TouchableOpacity
@@ -258,6 +319,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     padding: 10,
     borderRadius: 25,
+  },
+  recenterButton: {
+    position: 'absolute',
+    bottom: 150,
+    right: 20,
+    backgroundColor: '#2a4a8b',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+  },
+  recenterButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
 

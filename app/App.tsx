@@ -4,7 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
 import RouteScreen from './screens/RouteScreen';
 import StartNavigationScreen from './screens/StartNavigationScreen';
-import FirstPersonNavigationScreen from './screens/FirstPersonNavigationScreen';
 import { registerRootComponent } from 'expo';
 
 const Stack = createStackNavigator();
