@@ -51,7 +51,7 @@ const RouteScreen = () => {
       >
         <Marker coordinate={currentLocation} />
         {destination && <Marker coordinate={destination} />}
-        {routeCoords.length > 0 && <Polyline coordinates={routeCoords} strokeWidth={3} />}
+        {routeCoords.length > 0 && <Polyline coordinates={routeCoords} strokeWidth={8} strokeColor='blue' />}
       </MapView>
       <Button title="Start Navigation" onPress={handleStartNavigation} />
     </View>
