@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    paddingTop: 60, // Add padding to the top to account for removed navigation bar
   },
   logoContainer: {
     alignItems: 'center',
