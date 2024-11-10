@@ -4,14 +4,22 @@ import { RouteProp } from '@react-navigation/native';
 export type Coordinates = {
     latitude: number;
     longitude: number;
-  };
+};
   
-  // Define the parameter list for the stack navigator
-  export type RootStackParamList = {
-    Home: undefined; // Home screen does not need any parameters
-    Route: { currentLocation: Coordinates; destination: Coordinates }; // Route screen requires coordinates
-    StartNavigation: { currentLocation: Coordinates; destination: Coordinates }; // StartNavigation screen also requires coordinates
-  };
+// Define the parameter list for the stack navigator
+export type RootStackParamList = {
+    // Home screen does not need any parameters
+    Home: undefined; 
+    // Route screen requires coordinates and an optional selectedRoute
+    Route: { currentLocation: Coordinates; destination: Coordinates; selectedRoute?: Coordinates[] }; 
+    // StartNavigation screen also requires coordinates and selectedRoute
+    StartNavigation: { currentLocation: Coordinates; destination: Coordinates; selectedRoute: Coordinates[]; selectedRouteLegs: any  };
+    Favorites: undefined;
+    Friends: undefined;
+    Profile: undefined;
+
+
+};
   
 // For useRoute hook typing (optional)
 export type RouteScreenRouteProp = RouteProp<RootStackParamList, 'Route'>;
