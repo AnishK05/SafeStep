@@ -1,33 +1,34 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import { getDirections } from '../../utils/directionsService';
 import { useRoute } from '@react-navigation/native';
 import { LocationObject, watchPositionAsync, Accuracy } from 'expo-location';
 import { Magnetometer } from 'expo-sensors';
 import * as Speech from 'expo-speech';
 import { debounce } from 'lodash';
-import { Ionicons } from '@expo/vector-icons'; // Import icons for the toggle button
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-
 
 type Coordinates = {
   latitude: number;
   longitude: number;
 };
 
+
 const screenWidth = Dimensions.get('window').width;
 
 const FirstPersonNavigationScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { currentLocation, destination } = route.params as {
+  const { currentLocation, destination, selectedRoute, selectedRouteLegs } = route.params as {
     currentLocation: Coordinates;
     destination: Coordinates;
+    selectedRoute: Coordinates[];
+    selectedRouteLegs: any; // Adjust type if you have a defined type for route data
   };
 
   const [userLocation, setUserLocation] = useState<Coordinates>(currentLocation);
-  const [routeCoords, setRouteCoords] = useState<Coordinates[]>([]);
+  const [routeCoords, setRouteCoords] = useState<Coordinates[]>(selectedRoute);
   const [directions, setDirections] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [heading, setHeading] = useState<number>(0);
@@ -45,35 +46,30 @@ const FirstPersonNavigationScreen = () => {
     longitudeDelta: 0.01
   };
 
-  // Helper function to remove HTML tags
   const stripHtmlTags = (text: string): string => {
-    return text.replace(/<\/?[^>]+(>|$)/g, ""); // Removes any HTML tags
+    return text.replace(/<\/?[^>]+(>|$)/g, "");
   };
 
-  // Calculate distance between two coordinates
   const calculateDistance = (coord1: Coordinates, coord2: Coordinates): number => {
-    const R = 6371e3; // Earth radius in meters
+    const R = 6371e3;
     const φ1 = (coord1.latitude * Math.PI) / 180;
     const φ2 = (coord2.latitude * Math.PI) / 180;
     const Δφ = ((coord2.latitude - coord1.latitude) * Math.PI) / 180;
     const Δλ = ((coord2.longitude - coord1.longitude) * Math.PI) / 180;
 
-    const a =
-      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c; // Distance in meters
+    return R * c;
   };
 
-  // Manual camera re-centering function
   const recenterCamera = () => {
     if (mapRef.current) {
       mapRef.current.animateCamera(
         {
           center: userLocation,
-          pitch: 45, // Optional 3D pitch
-          heading: 0, // Face North
+          pitch: 45,
+          heading: 0,
           zoom: 17,
         },
         { duration: 500 }
@@ -96,39 +92,32 @@ const FirstPersonNavigationScreen = () => {
     }
   };
 
-  // Function to check if the user is close enough to the next step
   const checkProximityToStep = (location: Coordinates) => {
     let closestStep = currentStep;
     let minDistance = Number.MAX_SAFE_INTEGER;
     let userOnCorrectPath = false;
 
-    // Iterate through route segments to find the closest
     for (let i = currentStep; i < routeCoords.length - 1; i++) {
       const segmentStart = routeCoords[i];
       const segmentEnd = routeCoords[i + 1];
-      
-      // Calculate the perpendicular distance from the user to the route segment
       const distanceToSegment = calculateDistanceToSegment(location, segmentStart, segmentEnd);
 
       if (distanceToSegment < minDistance) {
         minDistance = distanceToSegment;
         closestStep = i;
-        
-        // Check if the user is heading in the correct direction along this segment
+
         if (isHeadingCorrect(location, segmentStart, segmentEnd)) {
           userOnCorrectPath = true;
         }
       }
     }
 
-    // If the user is close enough to the closest segment and heading correctly, update the step
     if (minDistance < 20 || userOnCorrectPath) {
       setCurrentStep(closestStep + 1);
       speakDirection(closestStep + 1);
     }
   };
 
-  // Helper function to calculate the perpendicular distance to a segment
   const calculateDistanceToSegment = (location: Coordinates, start: Coordinates, end: Coordinates): number => {
     const x0 = location.latitude;
     const y0 = location.longitude;
@@ -143,17 +132,14 @@ const FirstPersonNavigationScreen = () => {
     return numerator / denominator;
   };
 
-  // Helper function to check if the user is heading in the correct direction
   const isHeadingCorrect = (location: Coordinates, segmentStart: Coordinates, segmentEnd: Coordinates): boolean => {
     const desiredHeading = calculateBearing(segmentStart, segmentEnd);
     const currentHeading = calculateBearing(location, segmentEnd);
-    
-    // Check if the current heading is within a tolerance range of the desired heading
-    const tolerance = 20; // Degrees tolerance
+
+    const tolerance = 20;
     return Math.abs(desiredHeading - currentHeading) <= tolerance;
   };
 
-  // Helper function to calculate the bearing between two points
   const calculateBearing = (start: Coordinates, end: Coordinates): number => {
     const lat1 = start.latitude * (Math.PI / 180);
     const lat2 = end.latitude * (Math.PI / 180);
@@ -182,8 +168,6 @@ const FirstPersonNavigationScreen = () => {
           if (calculateDistance(lastKnownLocation.current, newLocation) > 5) {
             setUserLocation(newLocation);
             lastKnownLocation.current = newLocation;
-
-            // Check if user is near the next navigation step
             checkProximityToStep(newLocation);
           }
         }
@@ -200,21 +184,27 @@ const FirstPersonNavigationScreen = () => {
   }, [heading]);
 
   useEffect(() => {
-    if (destination) {
-      getDirections(currentLocation, destination).then(route => {
-        const coords = route.legs[0].steps.map((step: any) => ({
-          latitude: step.end_location.lat,
-          longitude: step.end_location.lng,
-        }));
-        const steps = route.legs[0].steps.map((step: any) => stripHtmlTags(step.html_instructions));
-        setRouteCoords(coords);
-        setDirections(steps);
-        Speech.speak(steps[0]);
-      }).catch(error => {
-        console.error('Error fetching directions:', error);
-      });
+    if (selectedRouteLegs && selectedRouteLegs.legs && selectedRouteLegs.legs.length > 0) {
+      const coords = selectedRouteLegs.legs[0].steps.map((step: any) => ({
+        latitude: step.end_location.lat,
+        longitude: step.end_location.lng,
+      }));
+      const steps = selectedRouteLegs.legs[0].steps.map((step: any) => stripHtmlTags(step.html_instructions));
+      setRouteCoords(coords);
+      setDirections(steps);
+      Speech.speak(steps[0]);
     }
-  }, [destination, currentLocation]);
+  }, [selectedRouteLegs]);
+
+
+  useEffect(() => {
+    // Assume that the directions for the selected route have already been set
+    // If needed, use the route's directions information (provided in RouteScreen)
+    if (selectedRoute) {
+      setRouteCoords(selectedRoute);
+      // Handle step-based instructions if already available (if you pass them through route.params)
+    }
+  }, [selectedRoute]);
 
   useEffect(() => {
     if (magnetometerSubscriptionRef.current) {
@@ -222,9 +212,9 @@ const FirstPersonNavigationScreen = () => {
     }
 
     magnetometerSubscriptionRef.current = Magnetometer.addListener(
-      debounce(({ x, y, z }) => {
+      debounce(({ x, y }) => {
         const angle = Math.atan2(y, x) * (180 / Math.PI);
-        const normalizedAngle = (angle >= 0 ? angle : 360 + angle);
+        const normalizedAngle = angle >= 0 ? angle : 360 + angle;
         setHeading(normalizedAngle);
       }, 1000)
     );
@@ -238,20 +228,17 @@ const FirstPersonNavigationScreen = () => {
 
   return (
     <View style={styles.container}>
-
-      {/* Custom Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
 
-      {/*StartNavigationScreen Content */}
       <Text style={styles.screenTitle}>Navigation Screen</Text>
 
       <MapView
         ref={mapRef}
         style={styles.map}
         showsUserLocation={true}
-        followsUserLocation={false} // Disable auto-following
+        followsUserLocation={false}
         pitchEnabled={true}
         rotateEnabled={true}
         zoomEnabled={true}
@@ -260,13 +247,8 @@ const FirstPersonNavigationScreen = () => {
         initialRegion={initialRegion}
       >
         {destination && <Marker coordinate={destination} />}
-
         {routeCoords.length > 0 && (
-          <Polyline
-            coordinates={routeCoords}
-            strokeWidth={8}
-            strokeColor="#0000FF"
-          />
+          <Polyline coordinates={routeCoords} strokeWidth={8} strokeColor="#0000FF" />
         )}
       </MapView>
 
@@ -276,23 +258,13 @@ const FirstPersonNavigationScreen = () => {
         </Text>
       </View>
 
-      {/* Recenter Button */}
-      <TouchableOpacity
-        style={styles.recenterButton}
-        onPress={recenterCamera}
-      >
-        <Ionicons
-          name="navigate-outline" // Use the navigate icon for re-centering
-          size={24}
-          color="#fff"
-        />
+      <TouchableOpacity style={styles.recenterButton} onPress={recenterCamera}>
+        <Ionicons name="navigate-outline" size={24} color="#fff" />
       </TouchableOpacity>
 
-      {/* Voice Toggle Icon */}
       <TouchableOpacity
         style={styles.voiceToggleContainer}
-        onPress={() => setVoiceEnabled(!voiceEnabled)}
-      >
+        onPress={() => setVoiceEnabled(!voiceEnabled)}>
         <Ionicons
           name={voiceEnabled ? "volume-high-outline" : "volume-mute-outline"}
           size={24}
@@ -352,10 +324,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'black',
-    borderRadius: 50, // Rounded button
-    width: 40, // Adjust width to make it square
-    height: 40, // Adjust height to make it square
-    marginLeft: 10, // Space around the button
+    borderRadius: 50,
+    width: 40,
+    height: 40,
+    marginLeft: 10,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
