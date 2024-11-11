@@ -6,7 +6,7 @@ import { LocationObject, watchPositionAsync, Accuracy } from 'expo-location';
 import { Magnetometer } from 'expo-sensors';
 import * as Speech from 'expo-speech';
 import { debounce } from 'lodash';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 type Coordinates = {
@@ -271,6 +271,16 @@ const FirstPersonNavigationScreen = () => {
           color="#000"
         />
       </TouchableOpacity>
+
+      <View style={styles.reportIconContainer}>
+        <TouchableOpacity style={styles.reportButton}>
+          <MaterialIcons name="report-problem" size={28} color="red" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.reportButton}>
+          <Ionicons name="construct-outline" size={28} color="orange" />
+        </TouchableOpacity>
+      </View>
+
     </View>
   );
 };
@@ -299,7 +309,7 @@ const styles = StyleSheet.create({
   },
   voiceToggleContainer: {
     position: 'absolute',
-    bottom: 80,
+    bottom: 90,
     right: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     padding: 10,
@@ -311,7 +321,7 @@ const styles = StyleSheet.create({
     right: 20,
     backgroundColor: '#2a4a8b',
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     borderRadius: 10,
   },
   recenterButtonText: {
@@ -337,6 +347,20 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  reportIconContainer: {
+    position: 'absolute',
+    bottom: 200, // Adjust to position above existing buttons
+    right: 20,
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
+  reportButton: {
+    alignItems: 'center',
+    marginBottom: 10, // Add spacing between buttons
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: 8,
+    borderRadius: 8,
   },
 });
 
