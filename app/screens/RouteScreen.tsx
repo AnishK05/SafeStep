@@ -37,6 +37,7 @@ const RouteScreen = () => {
 
   const handleStartNavigation = () => {
     navigation.navigate('StartNavigation', { currentLocation, destination });
+    
   };
 
   return (

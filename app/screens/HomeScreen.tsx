@@ -7,6 +7,8 @@ import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes'; // Import the param list
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 type Coordinates = {
   latitude: number;
@@ -105,7 +107,7 @@ const HomeScreen = () => {
           <FontAwesome name="smile-o" size={24} color="gray" />
           <Text style={styles.navText}>Friends</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profile')}>
           <Ionicons name="person" size={24} color="gray" />
           <Text style={styles.navText}>Profile</Text>
         </TouchableOpacity>

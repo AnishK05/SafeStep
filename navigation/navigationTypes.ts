@@ -11,6 +11,7 @@ export type Coordinates = {
     Home: undefined; // Home screen does not need any parameters
     Route: { currentLocation: Coordinates; destination: Coordinates }; // Route screen requires coordinates
     StartNavigation: { currentLocation: Coordinates; destination: Coordinates }; // StartNavigation screen also requires coordinates
+    Profile: undefined; // Add Profile screen without parameters
   };
   
 // For useRoute hook typing (optional)
