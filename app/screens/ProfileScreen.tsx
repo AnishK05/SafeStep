@@ -13,7 +13,8 @@ const ProfileScreen = () => {
   const navigation = useNavigation<ProfileScreenNavigationProp>();
   const [isLocationEnabled, setIsLocationEnabled] = useState(true);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-
+ 
+ 
   const pickImage = async () => {
     // Request permission to access the media library
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -21,7 +22,8 @@ const ProfileScreen = () => {
       Alert.alert('Permission denied', 'Sorry, we need camera roll permissions to make this work!');
       return;
     }
-
+ 
+ 
     // Open image picker
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -29,11 +31,13 @@ const ProfileScreen = () => {
       aspect: [1, 1], // Square aspect ratio
       quality: 1,
     });
-
+ 
+ 
     if (!result.canceled) {
       setProfileImage(result.assets[0].uri);
     }
   };
+ 
 
   return (
     <KeyboardAvoidingView
@@ -56,7 +60,8 @@ const ProfileScreen = () => {
               </View>
               <Text style={styles.profileName}>Jane Doe</Text>
             </TouchableOpacity>
-
+ 
+ 
             {/* Profile Buttons */}
             <View style={styles.profileButtonsContainer}>
               <TouchableOpacity style={styles.profileButton}>
@@ -69,7 +74,8 @@ const ProfileScreen = () => {
                 <Text style={styles.profileButtonText}>Settings</Text>
               </TouchableOpacity>
             </View>
-
+ 
+ 
             {/* Profile Options */}
             <View style={styles.profileOptions}>
               <View style={styles.option}>
@@ -93,7 +99,8 @@ const ProfileScreen = () => {
               </TouchableOpacity>
             </View>
           </ScrollView>
-
+ 
+ 
           {/* Bottom Navigation Bar */}
           <View style={styles.bottomNav}>
             <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
@@ -117,6 +124,7 @@ const ProfileScreen = () => {
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
+ 
 };
 
 const styles = StyleSheet.create({
@@ -204,6 +212,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'gray',
   },
-});
-
-export default ProfileScreen;
+ });
+ 
+ 
+ export default ProfileScreen;
+ 
