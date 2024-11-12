@@ -5,10 +5,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes'; // Adjust the path if needed
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 
-type FriendsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Friends'>;
+type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;
 
-const FriendsScreen = () => {
-  const navigation = useNavigation<FriendsScreenNavigationProp>();
+const ProfileScreen = () => {
+  const navigation = useNavigation<ProfileScreenNavigationProp>();
 
   return (
     <View style={styles.container}>
@@ -16,7 +16,7 @@ const FriendsScreen = () => {
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
 
-      <Text style={styles.screenTitle}>Friends Screen</Text>
+      <Text style={styles.screenTitle}>Profile Screen</Text>
 
       {/* Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
@@ -93,4 +93,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FriendsScreen;
+export default ProfileScreen;

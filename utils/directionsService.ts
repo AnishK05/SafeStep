@@ -5,18 +5,39 @@ type Coordinates = {
   longitude: number;
 };
 
+type Step = {
+  end_location: {
+    lat: number;
+    lng: number;
+  };
+};
+
+type Leg = {
+  steps: Step[];
+};
+
+type Route = {
+  legs: Leg[];
+};
+
 export const getDirections = async (
   origin: Coordinates,
   destination: Coordinates
 ) => {
-  const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&mode=walking&key=${GOOGLE_API_KEY}`;
+  const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&mode=walking&alternatives=true&key=${GOOGLE_API_KEY}`;
 
   try {
     const response = await fetch(url);
     const json = await response.json();
 
+    if (json.status !== 'OK') {
+      console.error('Google Directions API error:', json.status);
+      throw new Error(`Google Directions API error: ${json.status}`);
+    }
+
     if (json.routes && json.routes.length > 0) {
-      return json.routes[0]; // Return the first route with legs and steps
+      // Return all route data, including legs, for flexibility
+      return json.routes.map((route: Route) => route);
     } else {
       throw new Error("No routes found");
     }
