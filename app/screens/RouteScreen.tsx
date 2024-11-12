@@ -23,9 +23,7 @@ const generateRandomRouteMetadata = () => {
   const activityStatus = activityStatuses[Math.floor(Math.random() * activityStatuses.length)];
   const constructionLevel = constructionLevels[Math.floor(Math.random() * constructionLevels.length)];
 
-  // Calculate a fake safety rating
   const safetyRating = calculateSafetyRating(crimeLevel, lightingCondition, activityStatus, constructionLevel);
-  const reviewCount = Math.floor(Math.random() * 3000) + 100 // Random number of reviews between 100 and 3000
 
   return {
     crimeLevel,
@@ -33,7 +31,6 @@ const generateRandomRouteMetadata = () => {
     activityStatus,
     constructionLevel,
     safetyRating,
-    reviewCount,
   };
 };
 
@@ -82,6 +79,9 @@ const RouteScreen = () => {
   const [selectedRouteMetadata, setSelectedRouteMetadata] = useState<any>(null);
   const [isPopUpVisible, setIsPopUpVisible] = useState(false);
 
+  const [routesMetadata, setRoutesMetadata] = useState<any[]>([]);
+  const [bestRouteIndex, setBestRouteIndex] = useState<number | null>(null);
+
   useEffect(() => {
     if (destination) {
       getDirections(currentLocation, destination)
@@ -95,6 +95,22 @@ const RouteScreen = () => {
             );
             setRoutes(allRoutes);
             setRoutesData(routesData);
+
+            // Generate and store metadata for each route
+            const metadataArray = routesData.map(() => generateRandomRouteMetadata());
+            setRoutesMetadata(metadataArray);
+
+            // Determine the best route based on safety ratings
+            const ratings = metadataArray.map(metadata => metadata.safetyRating);
+            let highestRating = -1;
+            let recommendedIndex = null;
+            ratings.forEach((rating, index) => {
+              if (rating > highestRating) {
+                highestRating = rating;
+                recommendedIndex = index;
+              }
+            });
+            setBestRouteIndex(recommendedIndex);
           } else {
             Alert.alert('Error', 'Unexpected data structure from directions service.');
           }
@@ -111,15 +127,16 @@ const RouteScreen = () => {
     const selectedLeg = routesData[index]?.legs[0];
     const distance = selectedLeg?.distance?.text || "N/A";
     const duration = selectedLeg?.duration?.text || "N/A";
-  
+
+    // Use pre-generated metadata to ensure consistency
+    const selectedMetadata = routesMetadata[index] || {};
     setSelectedRouteMetadata({
-      ...generateRandomRouteMetadata(),
+      ...selectedMetadata,
       distance,
       duration,
     });
     setIsPopUpVisible(true); // Show pop-up when a route is selected
   };
-  
 
   const handleStartNavigation = () => {
     if (selectedRouteIndex !== null) {
@@ -136,7 +153,7 @@ const RouteScreen = () => {
     switch (level) {
       case "Low":
       case "Well-Lighted":
-      case "Quiet":
+      case "Busy":
       case "None":
         return "green";
       case "Moderate":
@@ -145,7 +162,7 @@ const RouteScreen = () => {
         return "orange";
       case "High":
       case "Poorly-Lighted":
-      case "Busy":
+      case "Quiet":
       case "Heavy":
         return "red";
       default:
@@ -188,39 +205,39 @@ const RouteScreen = () => {
 
       {isPopUpVisible && selectedRouteMetadata && (
         <View style={styles.popUpContainer}>
+
           <TouchableOpacity onPress={() => setIsPopUpVisible(false)} style={styles.closeButton}>
             <Ionicons name="close-outline" size={24} color="black" />
           </TouchableOpacity>
+
           <Text style={styles.popUpTitle}>Route Information</Text>
+
+          {selectedRouteIndex === bestRouteIndex && (
+            <Text style={styles.recommendedText}>Recommended Route!</Text>
+          )}
+
           <Text style={styles.metadataText}>Distance: {selectedRouteMetadata.distance}</Text>
           <Text style={styles.metadataText}>Duration: {selectedRouteMetadata.duration}</Text>
           
-          {/* Single Row Layout for All Flags */}
           <View style={styles.iconRow}>
             <MaterialIcons name="security" size={30} color={getIconColor(selectedRouteMetadata.crimeLevel)} />
             <Ionicons name="bulb-outline" size={30} color={getIconColor(selectedRouteMetadata.lightingCondition)} />
             <Ionicons name="people-outline" size={30} color={getIconColor(selectedRouteMetadata.activityStatus)} />
             <Ionicons name="construct-outline" size={30} color={getIconColor(selectedRouteMetadata.constructionLevel)} />
-
           </View>
 
-          {/* Safety Rating */}
           <View style={styles.safetyRatingRow}>
-            <Text style={[styles.safetyRatingText, styles.safetyRatingLabel]}>Safety:</Text>
-            {/* Generate stars based on the safety rating */}
+            <Text style={[styles.safetyRatingText, styles.safetyRatingLabel]}>Safety Rating:</Text>
             {Array.from({ length: Math.floor(selectedRouteMetadata.safetyRating) }).map((_, index) => (
               <Ionicons key={index} name="star" size={24} color="gold" style={styles.safetyStarIcon} />
             ))}
-            {/* Display a half-star if applicable */}
             {selectedRouteMetadata.safetyRating % 1 !== 0 && (
               <Ionicons name="star-half" size={24} color="gold" style={styles.safetyStarIcon} />
             )}
             <Text style={styles.safetyRatingText}>
               {selectedRouteMetadata.safetyRating}/5
             </Text>
-            <Text style={styles.reviewCountText}>({selectedRouteMetadata.reviewCount} reviews)</Text>
           </View>
-          
         </View>
       )}
 
@@ -289,8 +306,8 @@ const styles = StyleSheet.create({
   popUpContainer: {
     position: 'absolute',
     bottom: 175,
-    left: 15,
-    right: 15,
+    left: 20,
+    right: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 15,
     padding: 15,
@@ -301,16 +318,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   iconRow: {
-    flexDirection: 'row', // Ensure items are laid out horizontally
-    justifyContent: 'space-evenly', // Add spacing between icons
-    alignItems: 'center', // Center items vertically
-    marginTop: 10, // Optional: Add some top margin
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    marginTop: 10,
   },  
   closeButton: {
     position: 'absolute',
     top: 10,
     right: 10,
-    zIndex: 1, // Ensure it appears above other elements
+    zIndex: 1,
   },  
   metadataRow: {
     flexDirection: 'row',
@@ -337,10 +354,11 @@ const styles = StyleSheet.create({
   safetyStarIcon: {
     paddingRight: 4,
   },
-  reviewCountText: {
+  recommendedText: {
     fontSize: 12,
-    marginLeft: 4,
-    color: 'gray'
+    fontWeight: 'bold',
+    color: 'green',
+    marginBottom: 10,
   },
 });
 
