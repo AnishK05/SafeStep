@@ -15,8 +15,7 @@ const FriendsScreen = () => {
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
-
-      <Text style={styles.screenTitle}>Friends Screen</Text>
+      <Text style={styles.screenTitle}>Friends</Text>
 
       {/* Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
