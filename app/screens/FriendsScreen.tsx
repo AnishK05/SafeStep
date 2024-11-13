@@ -1,21 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes'; // Adjust the path if needed
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import MapViewComponent from '../../components/MapViewComponent';
+import { getCurrentLocation } from '../../utils/locationService';
+
+
+type Coordinates = {
+  latitude: number;
+  longitude: number;
+};
 
 type FriendsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Friends'>;
 
 const FriendsScreen = () => {
   const navigation = useNavigation<FriendsScreenNavigationProp>();
+  const [currentLocation, setCurrentLocation] = useState<Coordinates | null>(null);
+
+  useEffect(() => {
+    getCurrentLocation().then(location => {
+      setCurrentLocation(location);
+    }).catch(error => {
+      console.error("Error getting location: ", error);
+    });
+  }, []);
+
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
-      <Text style={styles.screenTitle}>Friends</Text>
+      <Text style={styles.screenTitle}>Friends Page</Text>
+      <View>
+        <View style={styles.mapArea}>
+          {!currentLocation ? (
+            <Text>Loading current location...</Text>
+          ) : (
+               <MapViewComponent currentLocation={currentLocation} destination={null} />
+          )}
+          </View>
+       </View>
 
       {/* Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
@@ -90,6 +118,12 @@ const styles = StyleSheet.create({
     fontSize: 12, // Adjust text size for bottom nav
     color: 'gray',
   },
+  mapArea: {
+    height: 350, // Adjust map size
+    marginHorizontal: 20,
+    borderRadius: 15,
+    overflow: 'hidden',
+  }, 
 });
 
 export default FriendsScreen;
