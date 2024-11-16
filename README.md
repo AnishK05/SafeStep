@@ -1,15 +1,34 @@
-# Notes to Deal with The Expo Go 52 SDK Upgrade:
+# Team Notes to Deal with The Expo Go 52 SDK Upgrade
 
-Step 1: Pull from this Git Repo
+## Step 1: Pull the Latest Code
 
-Step 2: Follow these commands:
+First, pull the latest code from the Git repository:
 
-   npm install expo@latest (installs latest version of expo go)
+```bash
+git pull origin main
+```
 
-   npx expo install --fix
+## Step 2: Install the Latest Expo Version
 
-   npx expo install --fix -- --legacy-peer-deps
+Run the following commands in your project root to upgrade Expo and fix dependencies:
 
-   npx expo install --fix -- --legacy-peer-deps (run it again, on this second time it should just say "Dependencies up to date")
-   
-   Remember to re-paste your Google API key if you are starting fresh
+```bash
+npm install expo@latest
+```
+
+Fix dependencies: Use the following commands to ensure all dependencies are up-to-date and compatible with Expo Go 52 SDK:
+
+```bash
+npx expo install --fix
+npx expo install --fix -- --legacy-peer-deps
+```
+
+Repeat the fix command: Run the legacy peer dependencies command one more time to confirm all dependencies are up-to-date:
+
+```bash
+npx expo install --fix -- --legacy-peer-deps
+```
+
+## Step 3: Set Up Environment Variables
+
+Create your .env file with your Google Maps API key if you started from scratch
