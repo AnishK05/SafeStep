@@ -8,6 +8,7 @@ import * as Speech from 'expo-speech';
 import { debounce } from 'lodash';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../../contexts/ThemeContext';
 
 type Coordinates = {
   latitude: number;
@@ -38,6 +39,7 @@ const FirstPersonNavigationScreen = () => {
   const lastKnownLocation = useRef<Coordinates>(currentLocation);
   const locationSubscriptionRef = useRef<any>(null);
   const magnetometerSubscriptionRef = useRef<any>(null);
+  const { isDarkTheme } = useTheme(); // Access theme state
 
   const initialRegion = {
     latitude: currentLocation.latitude,
@@ -227,16 +229,16 @@ const FirstPersonNavigationScreen = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="white" />
+    <View style={styles(isDarkTheme).container}>
+      <TouchableOpacity style={styles(isDarkTheme).backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color={isDarkTheme ? 'white' : 'black'} />
       </TouchableOpacity>
 
-      <Text style={styles.screenTitle}>Navigation Screen</Text>
+      <Text style={styles(isDarkTheme).screenTitle}>Navigation Screen</Text>
 
       <MapView
         ref={mapRef}
-        style={styles.map}
+        style={styles(isDarkTheme).map}
         showsUserLocation={true}
         followsUserLocation={false}
         pitchEnabled={true}
@@ -252,43 +254,44 @@ const FirstPersonNavigationScreen = () => {
         )}
       </MapView>
 
-      <View style={styles.directionsOverlay}>
-        <Text style={styles.directionsText}>
+      <View style={styles(isDarkTheme).directionsOverlay}>
+        <Text style={styles(isDarkTheme).directionsText}>
           {directions[currentStep] || 'You have reached your destination!'}
         </Text>
       </View>
 
-      <TouchableOpacity style={styles.recenterButton} onPress={recenterCamera}>
-        <Ionicons name="navigate-outline" size={24} color="#fff" />
+      <TouchableOpacity style={styles(isDarkTheme).recenterButton} onPress={recenterCamera}>
+        <Ionicons name="navigate-outline" size={24} color={isDarkTheme ? '#fff' : '#000'} />
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.voiceToggleContainer}
-        onPress={() => setVoiceEnabled(!voiceEnabled)}>
+        style={styles(isDarkTheme).voiceToggleContainer}
+        onPress={() => setVoiceEnabled(!voiceEnabled)}
+      >
         <Ionicons
           name={voiceEnabled ? "volume-high-outline" : "volume-mute-outline"}
           size={24}
-          color="#000"
+          color={isDarkTheme ? '#fff' : '#000'}
         />
       </TouchableOpacity>
 
-      <View style={styles.reportIconContainer}>
-        <TouchableOpacity style={styles.reportButton}>
+      <View style={styles(isDarkTheme).reportIconContainer}>
+        <TouchableOpacity style={styles(isDarkTheme).reportButton}>
           <MaterialIcons name="report-problem" size={28} color="red" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.reportButton}>
+        <TouchableOpacity style={styles(isDarkTheme).reportButton}>
           <Ionicons name="construct-outline" size={28} color="orange" />
         </TouchableOpacity>
       </View>
-
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = (isDarkTheme: boolean) => StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 60,
+    backgroundColor: isDarkTheme ? '#0b1a34' : '#f5f5f5',
   },
   map: {
     flex: 1,
@@ -297,13 +300,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 160,
     width: screenWidth - 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: isDarkTheme ? 'rgba(20, 20, 20, 0.8)' : 'rgba(0, 0, 0, 0.7)',
     padding: 10,
     borderRadius: 10,
     marginHorizontal: 10,
   },
   directionsText: {
-    color: '#fff',
+    color: isDarkTheme ? '#cccccc' : '#fff',
     fontSize: 16,
     textAlign: 'center',
   },
@@ -311,7 +314,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 90,
     right: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: isDarkTheme ? 'rgba(50, 50, 50, 0.8)' : 'rgba(255, 255, 255, 0.8)',
     padding: 10,
     borderRadius: 25,
   },
@@ -319,21 +322,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 150,
     right: 20,
-    backgroundColor: '#2a4a8b',
+    backgroundColor: isDarkTheme ? '#1c2a48' : '#2a4a8b',
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 10,
-  },
-  recenterButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black',
+    backgroundColor: isDarkTheme ? '#1c2a48' : 'black',
     borderRadius: 50,
     width: 40,
     height: 40,
@@ -347,18 +345,19 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     fontWeight: 'bold',
+    color: isDarkTheme ? '#ffffff' : '#000000',
   },
   reportIconContainer: {
     position: 'absolute',
-    bottom: 200, // Adjust to position above existing buttons
+    bottom: 200,
     right: 20,
     flexDirection: 'column',
     alignItems: 'flex-end',
   },
   reportButton: {
     alignItems: 'center',
-    marginBottom: 10, // Add spacing between buttons
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    marginBottom: 10,
+    backgroundColor: isDarkTheme ? 'rgba(40, 40, 40, 0.8)' : 'rgba(255, 255, 255, 0.8)',
     padding: 8,
     borderRadius: 8,
   },
