@@ -231,7 +231,7 @@ const FirstPersonNavigationScreen = () => {
   return (
     <View style={styles(isDarkTheme).container}>
       <TouchableOpacity style={styles(isDarkTheme).backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color={isDarkTheme ? 'white' : 'black'} />
+        <Ionicons name="arrow-back" size={24} color={isDarkTheme ? 'white' : 'white'} />
       </TouchableOpacity>
 
       <Text style={styles(isDarkTheme).screenTitle}>Navigation Screen</Text>
