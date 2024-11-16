@@ -6,6 +6,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { getDirections } from '../../utils/directionsService';
+import { useTheme } from '../../contexts/ThemeContext';
 
 type Coordinates = {
   latitude: number;
@@ -81,6 +82,7 @@ const RouteScreen = () => {
 
   const [routesMetadata, setRoutesMetadata] = useState<any[]>([]);
   const [bestRouteIndex, setBestRouteIndex] = useState<number | null>(null);
+  const { isDarkTheme } = useTheme();
 
   useEffect(() => {
     if (destination) {
@@ -171,15 +173,15 @@ const RouteScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="white" />
+    <View style={[styles(isDarkTheme).container]}>
+      <TouchableOpacity style={styles(isDarkTheme).backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color={isDarkTheme ? 'white' : 'white'} />
       </TouchableOpacity>
 
-      <Text style={styles.screenTitle}>Route Preview</Text>
+      <Text style={styles(isDarkTheme).screenTitle}>Route Preview</Text>
 
       <MapView
-        style={styles.map}
+        style={styles(isDarkTheme).map}
         region={{
           latitude: currentLocation.latitude,
           longitude: currentLocation.longitude,
@@ -195,7 +197,7 @@ const RouteScreen = () => {
             <Polyline
               key={`route-${index}`}
               coordinates={routeCoords}
-              strokeWidth={6}
+              strokeWidth={8}
               strokeColor={selectedRouteIndex === index ? 'blue' : 'gray'}
               tappable
               onPress={() => handleRouteSelect(index)}
@@ -204,37 +206,36 @@ const RouteScreen = () => {
       </MapView>
 
       {isPopUpVisible && selectedRouteMetadata && (
-        <View style={styles.popUpContainer}>
-
-          <TouchableOpacity onPress={() => setIsPopUpVisible(false)} style={styles.closeButton}>
-            <Ionicons name="close-outline" size={24} color="black" />
+        <View style={styles(isDarkTheme).popUpContainer}>
+          <TouchableOpacity onPress={() => setIsPopUpVisible(false)} style={styles(isDarkTheme).closeButton}>
+            <Ionicons name="close-outline" size={24} color={isDarkTheme ? 'white' : 'black'} />
           </TouchableOpacity>
 
-          <Text style={styles.popUpTitle}>Route Information</Text>
+          <Text style={styles(isDarkTheme).popUpTitle}>Route Information</Text>
 
           {selectedRouteIndex === bestRouteIndex && (
-            <Text style={styles.recommendedText}>Recommended Route!</Text>
+            <Text style={styles(isDarkTheme).recommendedText}>Recommended Route!</Text>
           )}
 
-          <Text style={styles.metadataText}>Distance: {selectedRouteMetadata.distance}</Text>
-          <Text style={styles.metadataText}>Duration: {selectedRouteMetadata.duration}</Text>
-          
-          <View style={styles.iconRow}>
+          <Text style={styles(isDarkTheme).metadataText}>Distance: {selectedRouteMetadata.distance}</Text>
+          <Text style={styles(isDarkTheme).metadataText}>Duration: {selectedRouteMetadata.duration}</Text>
+
+          <View style={styles(isDarkTheme).iconRow}>
             <MaterialIcons name="security" size={30} color={getIconColor(selectedRouteMetadata.crimeLevel)} />
             <Ionicons name="bulb-outline" size={30} color={getIconColor(selectedRouteMetadata.lightingCondition)} />
             <Ionicons name="people-outline" size={30} color={getIconColor(selectedRouteMetadata.activityStatus)} />
             <Ionicons name="construct-outline" size={30} color={getIconColor(selectedRouteMetadata.constructionLevel)} />
           </View>
 
-          <View style={styles.safetyRatingRow}>
-            <Text style={[styles.safetyRatingText, styles.safetyRatingLabel]}>Safety Rating:</Text>
+          <View style={styles(isDarkTheme).safetyRatingRow}>
+            <Text style={[styles(isDarkTheme).safetyRatingText, styles(isDarkTheme).safetyRatingLabel]}>Safety Rating:</Text>
             {Array.from({ length: Math.floor(selectedRouteMetadata.safetyRating) }).map((_, index) => (
-              <Ionicons key={index} name="star" size={24} color="gold" style={styles.safetyStarIcon} />
+              <Ionicons key={index} name="star" size={24} color="gold" style={styles(isDarkTheme).safetyStarIcon} />
             ))}
             {selectedRouteMetadata.safetyRating % 1 !== 0 && (
-              <Ionicons name="star-half" size={24} color="gold" style={styles.safetyStarIcon} />
+              <Ionicons name="star-half" size={24} color="gold" style={styles(isDarkTheme).safetyStarIcon} />
             )}
-            <Text style={styles.safetyRatingText}>
+            <Text style={styles(isDarkTheme).safetyRatingText}>
               {selectedRouteMetadata.safetyRating}/5
             </Text>
           </View>
@@ -243,26 +244,26 @@ const RouteScreen = () => {
 
       <TouchableOpacity
         style={[
-          styles.startNavigationButton,
-          selectedRouteIndex === null && styles.disabledButton
+          styles(isDarkTheme).startNavigationButton,
+          selectedRouteIndex === null && styles(isDarkTheme).disabledButton
         ]}
         onPress={handleStartNavigation}
         disabled={selectedRouteIndex === null}
       >
-        <Text style={styles.startNavigationButtonText}>Start Navigation</Text>
+        <Text style={styles(isDarkTheme).startNavigationButtonText}>Start Navigation</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = (isDarkTheme: boolean) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
     paddingTop: 60,
     paddingBottom: 20,
     paddingHorizontal: 5,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: isDarkTheme ? '#0b1a34' : '#f5f5f5',
   },
   map: {
     flex: 1,
@@ -271,7 +272,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black',
+    backgroundColor: isDarkTheme ? '#1c2a48' : 'black',
     borderRadius: 50,
     width: 40,
     height: 40,
@@ -285,9 +286,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     fontWeight: 'bold',
+    color: isDarkTheme ? '#ffffff' : '#000000',
   },
   startNavigationButton: {
-    backgroundColor: '#2a4a8b',
+    backgroundColor: isDarkTheme ? '#1c2a48' : '#2a4a8b',
     paddingVertical: 15,
     borderRadius: 10,
     marginHorizontal: 20,
@@ -296,10 +298,10 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   disabledButton: {
-    backgroundColor: 'gray',
+    backgroundColor: isDarkTheme ? '#555' : 'gray',
   },
   startNavigationButtonText: {
-    color: '#fff',
+    color: isDarkTheme ? '#e0e0e0' : '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -308,7 +310,7 @@ const styles = StyleSheet.create({
     bottom: 175,
     left: 20,
     right: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: isDarkTheme ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
     borderRadius: 15,
     padding: 15,
   },
@@ -316,37 +318,35 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: isDarkTheme ? '#ffffff' : '#000000',
   },
   iconRow: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
     marginTop: 10,
-  },  
+  },
   closeButton: {
     position: 'absolute',
     top: 10,
     right: 10,
     zIndex: 1,
-  },  
-  metadataRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 5,
   },
   metadataText: {
     marginLeft: 10,
     fontSize: 12,
+    color: isDarkTheme ? '#cccccc' : '#000000',
   },
   safetyRatingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
-  },  
+  },
   safetyRatingText: {
     fontSize: 12,
     fontWeight: 'bold',
+    color: isDarkTheme ? '#ffffff' : '#000000',
   },
   safetyRatingLabel: {
     paddingRight: 8,

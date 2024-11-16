@@ -7,28 +7,30 @@ import FavoritesScreen from './screens/FavoritesScreen';
 import FriendsScreen from './screens/FriendsScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import StartNavigationScreen from './screens/StartNavigationScreen';
-import { registerRootComponent } from 'expo';
+import { ThemeProvider } from '../contexts/ThemeContext';
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false, // Disable the default header for all screens
-        }}
-      >
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Route" component={RouteScreen} />
-        <Stack.Screen name="StartNavigation" component={StartNavigationScreen} />
-        <Stack.Screen name="Favorites" component={FavoritesScreen} />
-        <Stack.Screen name="Friends" component={FriendsScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ThemeProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false, // Disable the default header for all screens
+          }}
+        >
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Route" component={RouteScreen} />
+          <Stack.Screen name="StartNavigation" component={StartNavigationScreen} />
+          <Stack.Screen name="Favorites" component={FavoritesScreen} />
+          <Stack.Screen name="Friends" component={FriendsScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 };
 
-registerRootComponent(App);
+export default App;
   
