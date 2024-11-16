@@ -141,15 +141,24 @@ const RouteScreen = () => {
   };
 
   const handleStartNavigation = () => {
-    if (selectedRouteIndex !== null) {
+    if (selectedRouteIndex !== null && routesData[0]?.legs?.[0]) {
+      const distance = routesData[0].legs[0].distance?.text || 'N/A';
+      const duration = routesData[0].legs[0].duration?.text || 'N/A';
+  
       navigation.navigate('StartNavigation', {
         currentLocation,
         destination,
         selectedRoute: routes[selectedRouteIndex],
         selectedRouteLegs: routesData[selectedRouteIndex],
+        totalDistance: distance,
+        estimatedTime: duration,
       });
+    } else {
+      console.error('Invalid routesData structure:', routesData);
+      // Handle error here
     }
   };
+  
 
   const getIconColor = (level: string) => {
     switch (level) {
