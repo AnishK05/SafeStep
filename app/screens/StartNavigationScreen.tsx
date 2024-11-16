@@ -21,11 +21,13 @@ const screenWidth = Dimensions.get('window').width;
 const FirstPersonNavigationScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { currentLocation, destination, selectedRoute, selectedRouteLegs } = route.params as {
+  const { currentLocation, destination, selectedRoute, selectedRouteLegs, totalDistance, estimatedTime } = route.params as {
     currentLocation: Coordinates;
     destination: Coordinates;
     selectedRoute: Coordinates[];
-    selectedRouteLegs: any; // Adjust type if you have a defined type for route data
+    selectedRouteLegs: any; 
+    totalDistance: string;
+    estimatedTime: string;
   };
 
   const [userLocation, setUserLocation] = useState<Coordinates>(currentLocation);
@@ -40,6 +42,10 @@ const FirstPersonNavigationScreen = () => {
   const locationSubscriptionRef = useRef<any>(null);
   const magnetometerSubscriptionRef = useRef<any>(null);
   const { isDarkTheme } = useTheme(); // Access theme state
+
+  const [remainingDistance, setRemainingDistance] = useState<string>(totalDistance);
+  const [remainingTime, setRemainingTime] = useState<string>(estimatedTime);
+
 
   const initialRegion = {
     latitude: currentLocation.latitude,
@@ -98,6 +104,7 @@ const FirstPersonNavigationScreen = () => {
     let closestStep = currentStep;
     let minDistance = Number.MAX_SAFE_INTEGER;
     let userOnCorrectPath = false;
+    let distanceLeft = 0;
 
     for (let i = currentStep; i < routeCoords.length - 1; i++) {
       const segmentStart = routeCoords[i];
@@ -112,11 +119,26 @@ const FirstPersonNavigationScreen = () => {
           userOnCorrectPath = true;
         }
       }
+
+      // Sum remaining distances
+      if (i >= currentStep) {
+        distanceLeft += calculateDistance(segmentStart, segmentEnd);
+      }
+      
     }
 
     if (minDistance < 20 || userOnCorrectPath) {
       setCurrentStep(closestStep + 1);
       speakDirection(closestStep + 1);
+
+       // Convert distance to miles and update state
+      const remainingMiles = (distanceLeft / 1609.34).toFixed(2); // Convert meters to miles
+      setRemainingDistance(`${remainingMiles} mi`);
+
+      // Estimate remaining time based on a fixed average speed
+      const averageSpeedMph = 3; // Example walking speed in miles per hour
+      const remainingMinutes = Math.ceil((parseFloat(remainingMiles) / averageSpeedMph) * 60);
+      setRemainingTime(`${remainingMinutes} min`);
     }
   };
 
@@ -230,11 +252,6 @@ const FirstPersonNavigationScreen = () => {
 
   return (
     <View style={styles(isDarkTheme).container}>
-      <TouchableOpacity style={styles(isDarkTheme).backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color={isDarkTheme ? 'white' : 'white'} />
-      </TouchableOpacity>
-
-      <Text style={styles(isDarkTheme).screenTitle}>Navigation Screen</Text>
 
       <MapView
         ref={mapRef}
@@ -254,6 +271,16 @@ const FirstPersonNavigationScreen = () => {
         )}
       </MapView>
 
+      <View style={styles(isDarkTheme).displayOverlay}>
+        <View style={styles(isDarkTheme).routeInfo}>
+          <Text style={styles(isDarkTheme).infoTimeText}>{remainingTime}</Text>
+          <Text style={styles(isDarkTheme).infoDistanceText}>{remainingDistance}</Text>
+        </View>
+        <TouchableOpacity style={styles(isDarkTheme).exitButton} onPress={() => navigation.goBack()}>
+          <Text style={styles(isDarkTheme).exitButtonText}>Exit</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles(isDarkTheme).directionsOverlay}>
         <Text style={styles(isDarkTheme).directionsText}>
           {directions[currentStep] || 'You have reached your destination!'}
@@ -261,7 +288,7 @@ const FirstPersonNavigationScreen = () => {
       </View>
 
       <TouchableOpacity style={styles(isDarkTheme).recenterButton} onPress={recenterCamera}>
-        <Ionicons name="navigate-outline" size={24} color={isDarkTheme ? '#fff' : '#000'} />
+        <Ionicons name="navigate-outline" size={24} color={isDarkTheme ? '#fff' : '#fff'} />
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -271,18 +298,18 @@ const FirstPersonNavigationScreen = () => {
         <Ionicons
           name={voiceEnabled ? "volume-high-outline" : "volume-mute-outline"}
           size={24}
-          color={isDarkTheme ? '#fff' : '#000'}
+          color={isDarkTheme ? '#fff' : '#fff'}
         />
       </TouchableOpacity>
 
-      <View style={styles(isDarkTheme).reportIconContainer}>
-        <TouchableOpacity style={styles(isDarkTheme).reportButton}>
-          <MaterialIcons name="report-problem" size={28} color="red" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles(isDarkTheme).reportButton}>
-          <Ionicons name="construct-outline" size={28} color="orange" />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity style={styles(isDarkTheme).reportButton}>
+        <MaterialIcons name="report-problem" size={24} color="red" />
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles(isDarkTheme).constructionButton}>
+        <Ionicons name="construct-outline" size={24} color="orange" />
+      </TouchableOpacity>
+
     </View>
   );
 };
@@ -290,7 +317,6 @@ const FirstPersonNavigationScreen = () => {
 const styles = (isDarkTheme: boolean) => StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60,
     backgroundColor: isDarkTheme ? '#0b1a34' : '#f5f5f5',
   },
   map: {
@@ -298,68 +324,110 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
   },
   directionsOverlay: {
     position: 'absolute',
-    top: 160,
-    width: screenWidth - 20,
-    backgroundColor: isDarkTheme ? 'rgba(20, 20, 20, 0.8)' : 'rgba(0, 0, 0, 0.7)',
-    padding: 10,
+    top: 80,
+    width: screenWidth - 40,
+    alignSelf: 'center',
+    backgroundColor: isDarkTheme ? '#1c2a48' : '#fff',
+    padding: 15,
     borderRadius: 10,
-    marginHorizontal: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   directionsText: {
-    color: isDarkTheme ? '#cccccc' : '#fff',
-    fontSize: 16,
+    color: isDarkTheme ? '#fff' : '#000',
+    fontSize: 20,
     textAlign: 'center',
+  },
+  displayOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    width: screenWidth - 20,
+    marginHorizontal: 10,
+    backgroundColor: isDarkTheme ? '#1c1c1e' : '#ffffff',
+    paddingVertical: 25,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
+    shadowColor: '#ffffff',
+  },
+  routeInfo: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  infoTimeText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: isDarkTheme ? '#ffffff' : '#000000',
+    marginVertical: 2,
+  },
+  infoDistanceText: {
+    fontSize: 15,
+    color: isDarkTheme ? '#ffffff' : '#000000',
+    marginVertical: 2,
+  },
+  exitButton: {
+    backgroundColor: '#ff4d4d',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  exitButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   voiceToggleContainer: {
     position: 'absolute',
-    bottom: 90,
+    top: 270,
     right: 20,
-    backgroundColor: isDarkTheme ? 'rgba(50, 50, 50, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-    padding: 10,
-    borderRadius: 25,
+    backgroundColor: '#2a4a8b',
+    padding: 15,
+    borderRadius: 50,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   recenterButton: {
     position: 'absolute',
-    bottom: 150,
+    top: 200,
     right: 20,
-    backgroundColor: isDarkTheme ? '#1c2a48' : '#2a4a8b',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: isDarkTheme ? '#1c2a48' : 'black',
+    backgroundColor: '#2a4a8b',
+    padding: 15,
     borderRadius: 50,
-    width: 40,
-    height: 40,
-    marginLeft: 10,
     shadowColor: '#000',
     shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-  }, 
-  screenTitle: {
-    fontSize: 24,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: isDarkTheme ? '#ffffff' : '#000000',
-  },
-  reportIconContainer: {
-    position: 'absolute',
-    bottom: 200,
-    right: 20,
-    flexDirection: 'column',
-    alignItems: 'flex-end',
+    shadowRadius: 3,
   },
   reportButton: {
-    alignItems: 'center',
-    marginBottom: 10,
-    backgroundColor: isDarkTheme ? 'rgba(40, 40, 40, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-    padding: 8,
-    borderRadius: 8,
+    position: 'absolute',
+    top: 410,
+    right: 20,
+    backgroundColor: '#2a4a8b',
+    padding: 15,
+    borderRadius: 50,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  constructionButton: {
+    position: 'absolute',
+    top: 340,
+    right: 20,
+    backgroundColor: '#2a4a8b',
+    padding: 15,
+    borderRadius: 50,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
 });
 
