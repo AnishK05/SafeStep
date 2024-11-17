@@ -4,9 +4,10 @@ import SearchBar from '../../components/SearchBar';
 import MapViewComponent from '../../components/MapViewComponent';
 import { getCurrentLocation } from '../../utils/locationService';
 import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes'; // Import the param list
+import { useTheme } from '../../contexts/ThemeContext';
 
 type Coordinates = {
   latitude: number;
@@ -19,12 +20,14 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 const recentLocations = [
   { id: 1, name: 'Rise at West Campus', address: '2206 Nueces St, Austin, TX 78705', latitude: 30.283, longitude: -97.742 },
   { id: 2, name: "Coco's Cafe", address: '1910 Guadalupe St, Austin, TX 78705', latitude: 30.287, longitude: -97.740 },
-  { id: 3, name: 'Pinch', address: '2011 Whitis Ave, Austin, TX 78705', latitude: 30.285, longitude: -97.743  }
+  { id: 3, name: 'Pinch', address: '2011 Whitis Ave, Austin, TX 78705', latitude: 30.285, longitude: -97.743 }
 ];
 
 const HomeScreen = () => {
   const [currentLocation, setCurrentLocation] = useState<Coordinates | null>(null);
-  const navigation = useNavigation<HomeScreenNavigationProp>(); // Typed navigation
+  const navigation = useNavigation<HomeScreenNavigationProp>();
+  const { isDarkTheme, toggleTheme } = useTheme();
+  const route = useRoute(); // Get the current route
 
   useEffect(() => {
     getCurrentLocation().then(location => {
@@ -36,9 +39,9 @@ const HomeScreen = () => {
 
   const handleLocationSelect = (destination: Coordinates) => {
     if (currentLocation) {
-      navigation.navigate('Route', { currentLocation, destination }); // Type-safe navigation
+      navigation.navigate('Route', { currentLocation, destination });
     } else {
-      console.error("Current location is null. Cannot navigate"); // Debugging
+      console.error("Current location is null. Cannot navigate");
     }
   };
 
@@ -46,79 +49,128 @@ const HomeScreen = () => {
     handleLocationSelect(location);
   };
 
+  const isActive = (routeName: string) => route.name === routeName;
+
+   // Colors for active and inactive states
+   const activeColor = isDarkTheme ? 'white' : '#585d69';
+   const inactiveColor = isDarkTheme ? 'rgba(204, 204, 204, 0.5)' : 'rgba(128, 128, 128, 0.5)'; // Duller color with lower opacity for inactive icons
+
   return (
-    <View style={styles.container}>
+    <View style={styles(isDarkTheme).container}>
+      {/* Theme Toggle Button */}
+      <TouchableOpacity onPress={toggleTheme} style={styles(isDarkTheme).themeToggleButton}>
+        <Ionicons
+          name={isDarkTheme ? 'sunny' : 'moon'}
+          size={28}
+          color={isDarkTheme ? '#ffcc00' : '#555'}
+        />
+      </TouchableOpacity>
+
       <FlatList
         data={recentLocations}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={() => (
           <View>
-            <View style={styles.logoContainer}>
-              <Text style={styles.logoText}>SafeStep</Text>
+            <View style={styles(isDarkTheme).logoContainer}>
+              <Text style={styles(isDarkTheme).logoText}>SafeStep</Text>
             </View>
 
-            <View style={styles.searchContainer}>
-              <SearchBar onLocationSelect={handleLocationSelect} />
-              <Ionicons name="search" size={24} color="gray" style={styles.searchIcon} />
+            <SearchBar onLocationSelect={handleLocationSelect} isDarkTheme={isDarkTheme} />
+
+            <View style={styles(isDarkTheme).recentHeader}>
+              <Text style={styles(isDarkTheme).recentText}>Recent</Text>
+              <Ionicons name="information-circle-outline" size={24} color={isDarkTheme ? '#ccc' : 'gray'} />
             </View>
 
-            <View style={styles.recentHeader}>
-              <Text style={styles.recentText}>Recent</Text>
-              <Ionicons name="information-circle-outline" size={24} color="gray" />
-            </View>
           </View>
         )}
         renderItem={({ item }) => (
-          <TouchableOpacity key={item.id} style={styles.recentItem} onPress={() => handleRecentClick(item)}>
-            <MaterialIcons name="history" size={20} color="gray" />
-            <View style={styles.recentItemTextContainer}>
-              <Text style={styles.recentItemName}>{item.name}</Text>
-              <Text style={styles.recentItemAddress}>{item.address}</Text>
+          <TouchableOpacity key={item.id} style={styles(isDarkTheme).recentItem} onPress={() => handleRecentClick(item)}>
+            <MaterialIcons name="history" size={20} color={isDarkTheme ? '#ccc' : 'gray'} />
+            <View style={styles(isDarkTheme).recentItemTextContainer}>
+              <Text style={styles(isDarkTheme).recentItemName}>{item.name}</Text>
+              <Text style={styles(isDarkTheme).recentItemAddress}>{item.address}</Text>
             </View>
           </TouchableOpacity>
         )}
         ListFooterComponent={() => (
           <View>
-            <View style={styles.mapContainer}>
+            <View style={styles(isDarkTheme).mapContainer}>
               {!currentLocation ? (
-                <Text>Loading current location...</Text>
+                <Text style={{ color: isDarkTheme ? '#ccc' : '#000' }}>Loading current location...</Text>
               ) : (
                 <MapViewComponent currentLocation={currentLocation} destination={null} />
               )}
             </View>
           </View>
         )}
-        keyboardShouldPersistTaps="always"  // Important for Google Places interaction
+        keyboardShouldPersistTaps="always"
       />
 
-      {/* Bottom Navigation Bar */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
-          <Ionicons name="home" size={24} color="gray" />
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Favorites')}>
-          <FontAwesome name="star" size={24} color="gray" />
-          <Text style={styles.navText}>Favorites</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Friends')}>
-          <FontAwesome name="smile-o" size={24} color="gray" />
-          <Text style={styles.navText}>Friends</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profile')}>
-          <Ionicons name="person" size={24} color="gray" />
-          <Text style={styles.navText}>Profile</Text>
-        </TouchableOpacity>
+      <View style={styles(isDarkTheme).bottomNav}>
+        <TouchableOpacity style={styles(isDarkTheme).navItem} onPress={() => navigation.navigate('Home')}>
+            <Ionicons
+              name="home"
+              size={24}
+              color={isActive('Home') ? activeColor : inactiveColor}
+            />
+            <Text style={[styles(isDarkTheme).navText, { color: isActive('Home') ? activeColor : inactiveColor }]}>
+              Home
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles(isDarkTheme).navItem} onPress={() => navigation.navigate('Favorites')}>
+            <FontAwesome
+              name="star"
+              size={24}
+              color={isActive('Favorites') ? activeColor : inactiveColor}
+            />
+            <Text style={[styles(isDarkTheme).navText, { color: isActive('Favorites') ? activeColor : inactiveColor }]}>
+              Favorites
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles(isDarkTheme).navItem} onPress={() => navigation.navigate('Friends')}>
+            <FontAwesome
+              name="smile-o"
+              size={24}
+              color={isActive('Friends') ? activeColor : inactiveColor}
+            />
+            <Text style={[styles(isDarkTheme).navText, { color: isActive('Friends') ? activeColor : inactiveColor }]}>
+              Friends
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles(isDarkTheme).navItem} onPress={() => navigation.navigate('Profile')}>
+            <Ionicons
+              name="person"
+              size={24}
+              color={isActive('Profile') ? activeColor : inactiveColor}
+            />
+            <Text style={[styles(isDarkTheme).navText, { color: isActive('Profile') ? activeColor : inactiveColor }]}>
+              Profile
+            </Text>
+          </TouchableOpacity>
       </View>
+
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = (isDarkTheme: boolean) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    paddingTop: 60, // Add padding to the top to account for removed navigation bar
+    backgroundColor: isDarkTheme ? '#0b1a34' : '#f5f5f5', // Super dark blue background for dark theme
+    paddingTop: 60,
+  },
+  themeToggleButton: {
+    position: 'absolute',
+    top: 50,
+    right: 15,
+    width: 80, 
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
+    zIndex: 1,
+    backgroundColor: isDarkTheme ? '#1c2a48' : '#ddd',
   },
   logoContainer: {
     alignItems: 'center',
@@ -127,20 +179,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 24,
     fontWeight: 'bold',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginBottom: 20,
-    borderRadius: 50,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    color: isDarkTheme ? '#ffffff' : '#000000',
   },
   searchIcon: {
     marginLeft: 10,
@@ -149,12 +188,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 10,
     marginBottom: 10,
     marginHorizontal: 20,
   },
   recentText: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: isDarkTheme ? '#ffffff' : '#000000',
   },
   recentItem: {
     flexDirection: 'row',
@@ -168,13 +209,14 @@ const styles = StyleSheet.create({
   recentItemName: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: isDarkTheme ? '#ffffff' : '#000000',
   },
   recentItemAddress: {
     fontSize: 12,
-    color: 'gray',
+    color: isDarkTheme ? '#cccccc' : 'gray',
   },
   mapContainer: {
-    height: 350, // Adjust map size
+    height: 350,
     marginHorizontal: 20,
     borderRadius: 15,
     overflow: 'hidden',
@@ -184,8 +226,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     paddingVertical: 10,
-    paddingBottom: 50, // Add padding for bottom navigation
-    backgroundColor: '#fff',
+    paddingBottom: 50,
+    backgroundColor: isDarkTheme ? '#1c2a48' : '#ffffff',
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
@@ -195,8 +237,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   navText: {
-    fontSize: 12, // Adjust text size for bottom nav
-    color: 'gray',
+    fontSize: 12,
+    color: isDarkTheme ? '#cccccc' : 'gray',
   },
 });
 

@@ -13,7 +13,7 @@ export type RootStackParamList = {
     // Route screen requires coordinates and an optional selectedRoute
     Route: { currentLocation: Coordinates; destination: Coordinates; selectedRoute?: Coordinates[] }; 
     // StartNavigation screen also requires coordinates and selectedRoute
-    StartNavigation: { currentLocation: Coordinates; destination: Coordinates; selectedRoute: Coordinates[]; selectedRouteLegs: any  };
+    StartNavigation: { currentLocation: Coordinates; destination: Coordinates; selectedRoute: Coordinates[]; selectedRouteLegs: any; totalDistance: string; estimatedTime: string; };
     Favorites: undefined;
     Friends: undefined;
     Profile: undefined;
