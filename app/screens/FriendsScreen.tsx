@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes'; // Adjust the path if needed
@@ -44,6 +44,24 @@ const FriendsScreen = () => {
           )}
           </View>
        </View>
+
+      <View>
+      <MapView>
+
+      </MapView>
+          <Marker coordinate= {{
+            latitude: 30.2864470,
+            longitude: 97.7439832
+          }}
+            image={require('../screens/bluefriendmarker.png')}
+            title = "John"
+          />
+      </View>
+
+      <View style={styles.friends}>
+        {/* <TouchableOpacity style={styles.square} ></TouchableOpacity> */}
+        <Text style={styles.names}>John Adams</Text>
+      </View>
 
       {/* Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
@@ -123,6 +141,34 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 15,
     overflow: 'hidden',
+  }, 
+  bluemarker: {
+    height: 350, // Adjust map size
+    marginHorizontal: 20,
+    borderRadius: 15,
+    overflow: 'hidden',
+  }, 
+  friends: {
+    backgroundColor: '#ADD8E6', 
+    padding: 15,
+    borderRadius: 10,
+    width: 370,
+    height: 70,
+    // alignItems: 'left',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    marginBottom: 20,
+  }, 
+  square: {
+    width: 24,
+    height: 24,
+    backgroundColor: '#FFFF',
+  }, 
+  names: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    flexDirection: 'row',
+    alignItems: 'center',
   }, 
 });
 
