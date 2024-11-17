@@ -20,6 +20,13 @@ const FriendsScreen = () => {
   const navigation = useNavigation<FriendsScreenNavigationProp>();
   const [currentLocation, setCurrentLocation] = useState<Coordinates | null>(null);
 
+  const INITIAL_REGION = {
+    latitude: 30.2864002,
+    longitude: -97.7370146,
+    latitudeDelta: .0095,
+    longitudeDelta: .0095,
+  };
+
   useEffect(() => {
     getCurrentLocation().then(location => {
       setCurrentLocation(location);
@@ -36,27 +43,37 @@ const FriendsScreen = () => {
       </TouchableOpacity>
       <Text style={styles.screenTitle}>Friends Page</Text>
       <View>
-        <View style={styles.mapArea}>
-          {!currentLocation ? (
-            <Text>Loading current location...</Text>
-          ) : (
-               <MapViewComponent currentLocation={currentLocation} destination={null} />
-          )}
-          </View>
-       </View>
-
-      <View>
-      <MapView>
-
+      <MapView style={styles.mapArea}
+        initialRegion= {INITIAL_REGION}
+        showsUserLocation
+        //showsMyLocationButton
+      >
+        <Marker style={styles.bluemarker} coordinate= {{
+          latitude: 30.2862398,
+          longitude: -97.7401890,
+        }}
+          image={require('../screens/aprilparker.png')}
+          title = "April Parker"
+          description='Peter T. Flawn Center'
+      />
+        <Marker style={styles.bluemarker} coordinate= {{
+          latitude: 30.2840038,
+          longitude: -97.7366958,
+        }}
+          image={require('../screens/logansharp.png')}
+          title = "Logan Sharp"
+          description='Gregory Gymnasium'
+      />
+        <Marker style={styles.bluemarker} coordinate= {{
+          latitude: 30.2881416,
+          longitude: -97.7352159,
+        }}
+          image={require('../screens/guspage.png')}
+          title = "Gus Page"
+          description='University of TX College-Pharm'
+      />
       </MapView>
-          <Marker coordinate= {{
-            latitude: 30.2864470,
-            longitude: 97.7439832
-          }}
-            image={require('../screens/bluefriendmarker.png')}
-            title = "John"
-          />
-      </View>
+       </View>
 
       <View style={styles.friends}>
         {/* <TouchableOpacity style={styles.square} ></TouchableOpacity> */}
@@ -143,13 +160,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   }, 
   bluemarker: {
-    height: 350, // Adjust map size
-    marginHorizontal: 20,
-    borderRadius: 15,
-    overflow: 'hidden',
+    width: 60,
+    height: 60,
   }, 
   friends: {
-    backgroundColor: '#ADD8E6', 
+    backgroundColor: '#D3D3D3', 
     padding: 15,
     borderRadius: 10,
     width: 370,
