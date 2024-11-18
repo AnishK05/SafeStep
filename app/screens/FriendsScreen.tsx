@@ -52,7 +52,7 @@ const FriendsScreen = () => {
           latitude: 30.2862398,
           longitude: -97.7401890,
         }}
-          image={require('../screens/aprilparker.png')}
+          image={require('../assets/images/aprilparker.png')}
           title = "April Parker"
           description='Peter T. Flawn Center'
       />
@@ -60,7 +60,7 @@ const FriendsScreen = () => {
           latitude: 30.2840038,
           longitude: -97.7366958,
         }}
-          image={require('../screens/logansharp.png')}
+          image={require('../assets/images/logansharp.png')}
           title = "Logan Sharp"
           description='Gregory Gymnasium'
       />
@@ -68,7 +68,7 @@ const FriendsScreen = () => {
           latitude: 30.2881416,
           longitude: -97.7352159,
         }}
-          image={require('../screens/guspage.png')}
+          image={require('../assets/images/guspage.png')}
           title = "Gus Page"
           description='University of TX College-Pharm'
       />
@@ -76,7 +76,7 @@ const FriendsScreen = () => {
           latitude: 29.9884212,
           longitude: -97.8766528,
         }}
-          image={require('../screens/arilee.png')}
+          image={require('../assets/images/arilee.png')}
           title = "Ari Lee"
           description='Mary Kyle Hartson Park'
       />
@@ -86,16 +86,16 @@ const FriendsScreen = () => {
         <ScrollView style={styles.friends}>
           {/* <TouchableOpacity style={styles.square} ></TouchableOpacity> */}
          <Text style={styles.names}>Friends</Text>
-         <Image source ={require('../screens/upclosecat.png')} style={styles.profilepic} />
+         <Image source ={require('../assets/images/upclosecat.png')} style={styles.profilepic} />
          <Text style={styles.person}>April Parker</Text>
          <Text style={styles.personLoc}>Austin, TX, Now</Text>
-         <Image source ={require('../screens/logan.png')} style={styles.profilepic} />
+         <Image source ={require('../assets/images/logan.png')} style={styles.profilepic} />
          <Text style={styles.person}>Logan Sharp</Text>
          <Text style={styles.personLocTwo}>Austin, TX, 5 min. ago</Text>
-         <Image source ={require('../screens/gus.png')} style={styles.profilepic} />
+         <Image source ={require('../assets/images/gus.png')} style={styles.profilepic} />
          <Text style={styles.person}>Gus Page</Text>
          <Text style={styles.personLocThree}>Austin, TX, 7 min. ago</Text>
-         <Image source ={require('../screens/ari.png')} style={styles.profilepic} />
+         <Image source ={require('../assets/images/ari.png')} style={styles.profilepic} />
          <Text style={styles.person}>Ari Lee</Text>
          <Text style={styles.personLocFour}>Kyle, TX, 12 min. ago</Text>
          
@@ -191,15 +191,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#D3D3D3', 
     padding: 15,
     borderRadius: 15,
-    //width: 360,
     marginHorizontal: 0,
     height: 220,
-    //alignItems: 'left',
-    //justifyContent: 'space-between',
     marginTop: 20,
     marginBottom: 20,
     alignSelf: 'center',
-    //overflow: 'hidden',
   }, 
   profilepic: {
     width: 45,
@@ -234,21 +230,18 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginVertical: 14,
     marginLeft: 158,
-    //textAlign: 'right'
  }, 
  personLocThree: {
   fontSize: 17,
   fontStyle: 'italic',
   marginVertical: 14,
   marginLeft: 135,
-  //textAlign: 'right'
 }, 
 personLocFour: {
   fontSize: 17,
   fontStyle: 'italic',
   marginVertical: 15,
   marginLeft: 113,
-  //textAlign: 'right'
 }, 
 });
 
