@@ -7,6 +7,8 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackParamList } from '../../navigation/navigationTypes';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { RootStackParamList } from '../../navigation/navigationTypes';
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;
 
@@ -131,6 +133,7 @@ const ProfileScreen = () => {
       </KeyboardAvoidingView>
     </View>
   );
+ 
 };
 
 const styles = StyleSheet.create({
@@ -146,16 +149,21 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'black',
+    paddingVertical: 20,
+  },
+  profileImageContainer: {
+    position: 'relative',
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
     borderRadius: 50,
-    width: 40,
-    height: 40,
-    margin: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    marginBottom: 10,
+  },
+  plusIcon: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
   },
   scrollViewContent: {
     paddingBottom: 20, // Adds spacing for scrolling content
@@ -229,12 +237,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     paddingVertical: 10,
-    paddingBottom: 50, // Add padding for bottom navigation
+    paddingBottom: 20, // Ensure enough space at the bottom
     backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
   navItem: {
     alignItems: 'center',
@@ -243,6 +254,8 @@ const styles = StyleSheet.create({
     fontSize: 12, // Adjust text size for the bottom navigation
     color: 'gray',
   },
-});
-
-export default ProfileScreen;
+ });
+ 
+ 
+ export default ProfileScreen;
+ 
