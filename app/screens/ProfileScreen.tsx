@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert, Switch } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -81,26 +82,26 @@ const ProfileScreen = () => {
               {/* Profile Options with left-aligned text */}
               <View style={styles.profileOptions}>
                 <View style={styles.option}>
-                  <Ionicons name="location-outline" size={24} color="black" />
+                  <Ionicons name="location" size={26} color="black" />
                   <Text style={styles.optionText}>Share My Location</Text>
                   <View style={styles.switchContainer}>
                     <Switch value={isLocationEnabled} onValueChange={setIsLocationEnabled} />
                   </View>
                 </View>
                 <TouchableOpacity style={styles.option}>
-                  <Ionicons name="person-add-outline" size={24} color="black" />
+                  <MaterialCommunityIcons name="hospital" size={28} color="black" />
                   <Text style={styles.optionText}>Emergency Contacts</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.option}>
-                  <Ionicons name="help-circle-outline" size={24} color="black" />
+                  <Ionicons name="help-circle" size={26} color="black" />
                   <Text style={styles.optionText}>Help</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.option}>
-                  <Ionicons name="information-circle-outline" size={24} color="black" />
+                  <Ionicons name="information-circle" size={26} color="black" />
                   <Text style={styles.optionText}>About</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.option}>
-                  <Ionicons name="log-out-outline" size={24} color="black" />
+                  <Ionicons name="log-out" size={26} color="black" />
                   <Text style={styles.optionText}>Log Out</Text>
                 </TouchableOpacity>
               </View>
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start', // Align text to the left
     alignItems: 'center',
-    paddingVertical: 15,
+    paddingVertical: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
