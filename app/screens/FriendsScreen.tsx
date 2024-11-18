@@ -179,25 +179,27 @@ const styles = StyleSheet.create({
   mapArea: {
     //width: 340,
     height: 370, // Adjust map size
-    marginHorizontal: 20,
+    marginHorizontal: 15,
     borderRadius: 15,
     overflow: 'hidden',
   }, 
   bluemarker: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
   }, 
   friends: {
     backgroundColor: '#D3D3D3', 
     padding: 15,
-    borderRadius: 10,
-    width: 346,
+    borderRadius: 15,
+    //width: 360,
+    marginHorizontal: 0,
     height: 220,
     //alignItems: 'left',
     //justifyContent: 'space-between',
     marginTop: 20,
     marginBottom: 20,
     alignSelf: 'center',
+    //overflow: 'hidden',
   }, 
   profilepic: {
     width: 45,
@@ -244,7 +246,7 @@ const styles = StyleSheet.create({
 personLocFour: {
   fontSize: 17,
   fontStyle: 'italic',
-  marginVertical: 14,
+  marginVertical: 15,
   marginLeft: 113,
   //textAlign: 'right'
 }, 
