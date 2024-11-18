@@ -59,7 +59,7 @@ const FriendsScreen = () => {
           longitude: -97.7401890,
         }}
           image={require('../assets/images/aprilparker.png')}
-          title = "April Parker"
+          title = "April Parker" 
           description='Peter T. Flawn Center'
       />
         <Marker style={styles(isDarkTheme).bluemarker} coordinate= {{
@@ -90,23 +90,19 @@ const FriendsScreen = () => {
        </View>
 
         <ScrollView style={styles(isDarkTheme).friends}>
-          {/* <TouchableOpacity style={styles.square} ></TouchableOpacity> */}
-         <Text style={styles(isDarkTheme).names}>Friends</Text>
-         <Image source ={require('../assets/images/upclosecat.png')} style={styles(isDarkTheme).profilepic} />
-         <Text style={styles(isDarkTheme).person}>April Parker</Text>
-         <Text style={styles(isDarkTheme).personLoc}>Austin, TX, Now</Text>
-         <Image source ={require('../assets/images/logan.png')} style={styles(isDarkTheme).profilepic} />
-         <Text style={styles(isDarkTheme).person}>Logan Sharp</Text>
-         <Text style={styles(isDarkTheme).personLocTwo}>Austin, TX, 5 min. ago</Text>
-         <Image source ={require('../assets/images/gus.png')} style={styles(isDarkTheme).profilepic} />
-         <Text style={styles(isDarkTheme).person}>Gus Page</Text>
-         <Text style={styles(isDarkTheme).personLocThree}>Austin, TX, 7 min. ago</Text>
-         <Image source ={require('../assets/images/ari.png')} style={styles(isDarkTheme).profilepic} />
-         <Text style={styles(isDarkTheme).person}>Ari Lee</Text>
-         <Text style={styles(isDarkTheme).personLocFour}>Kyle, TX, 12 min. ago</Text>
-         
-         
-
+          <Text style={styles(isDarkTheme).names}>Friends</Text>
+          <Image source ={require('../assets/images/upclosecat.png')} style={styles(isDarkTheme).profilepic} />
+          <Text style={styles(isDarkTheme).person}>April Parker</Text>
+          <Text style={styles(isDarkTheme).personLoc}>Austin, TX, Now</Text>
+          <Image source ={require('../assets/images/logan.png')} style={styles(isDarkTheme).profilepic} />
+          <Text style={styles(isDarkTheme).person}>Logan Sharp</Text>
+          <Text style={styles(isDarkTheme).personLocTwo}>Austin, TX, 5 min. ago</Text>
+          <Image source ={require('../assets/images/gus.png')} style={styles(isDarkTheme).profilepic} />
+          <Text style={styles(isDarkTheme).person}>Gus Page</Text>
+          <Text style={styles(isDarkTheme).personLocThree}>Austin, TX, 7 min. ago</Text>
+          <Image source ={require('../assets/images/ari.png')} style={styles(isDarkTheme).profilepic} />
+          <Text style={styles(isDarkTheme).person}>Ari Lee</Text>
+          <Text style={styles(isDarkTheme).personLocFour}>Kyle, TX, 12 min. ago</Text>
         </ScrollView>
 
       {/* Bottom Navigation Bar */}
@@ -219,7 +215,7 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
   mapArea: {
     //width: 340,
     height: 370, // Adjust map size
-    marginHorizontal: 15,
+    marginHorizontal: 20,
     borderRadius: 15,
     overflow: 'hidden',
   }, 
@@ -232,7 +228,7 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     padding: 15,
     borderRadius: 15,
     marginHorizontal: 0,
-    width: 360,
+    //width: 360,
     height: 220,
     marginTop: 20,
     marginBottom: 20,
@@ -288,6 +284,13 @@ personLocFour: {
   marginVertical: 15,
   marginLeft: 113,
   color: isDarkTheme ? '#ffffff' : '#000000',
+}, 
+callout: {
+  // fontSize: 17,
+  // fontStyle: 'italic',
+  // marginVertical: 15,
+  // marginLeft: 113,
+  // color: isDarkTheme ? '#ffffff' : '#000000',
 }, 
 });
 
