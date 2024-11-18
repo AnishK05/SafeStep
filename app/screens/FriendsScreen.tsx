@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes'; // Adjust the path if needed
@@ -7,6 +7,7 @@ import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import MapViewComponent from '../../components/MapViewComponent';
 import { getCurrentLocation } from '../../utils/locationService';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 type Coordinates = {
@@ -41,12 +42,11 @@ const FriendsScreen = () => {
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
-      <Text style={styles.screenTitle}>Friends Page</Text>
+      {/* <Text style={styles.screenTitle}>Friends Page</Text> */}
       <View>
       <MapView style={styles.mapArea}
         initialRegion= {INITIAL_REGION}
         showsUserLocation
-        //showsMyLocationButton
       >
         <Marker style={styles.bluemarker} coordinate= {{
           latitude: 30.2862398,
@@ -72,13 +72,36 @@ const FriendsScreen = () => {
           title = "Gus Page"
           description='University of TX College-Pharm'
       />
+        <Marker style={styles.bluemarker} coordinate= {{
+          latitude: 29.9884212,
+          longitude: -97.8766528,
+        }}
+          image={require('../screens/arilee.png')}
+          title = "Ari Lee"
+          description='Mary Kyle Hartson Park'
+      />
       </MapView>
        </View>
 
-      <View style={styles.friends}>
-        {/* <TouchableOpacity style={styles.square} ></TouchableOpacity> */}
-        <Text style={styles.names}>John Adams</Text>
-      </View>
+        <ScrollView style={styles.friends}>
+          {/* <TouchableOpacity style={styles.square} ></TouchableOpacity> */}
+         <Text style={styles.names}>Friends</Text>
+         <Image source ={require('../screens/upclosecat.png')} style={styles.profilepic} />
+         <Text style={styles.person}>April Parker</Text>
+         <Text style={styles.personLoc}>Austin, TX, Now</Text>
+         <Image source ={require('../screens/logan.png')} style={styles.profilepic} />
+         <Text style={styles.person}>Logan Sharp</Text>
+         <Text style={styles.personLocTwo}>Austin, TX, 5 min. ago</Text>
+         <Image source ={require('../screens/gus.png')} style={styles.profilepic} />
+         <Text style={styles.person}>Gus Page</Text>
+         <Text style={styles.personLocThree}>Austin, TX, 7 min. ago</Text>
+         <Image source ={require('../screens/ari.png')} style={styles.profilepic} />
+         <Text style={styles.person}>Ari Lee</Text>
+         <Text style={styles.personLocFour}>Kyle, TX, 12 min. ago</Text>
+         
+         
+
+        </ScrollView>
 
       {/* Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
@@ -154,7 +177,8 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   mapArea: {
-    height: 350, // Adjust map size
+    //width: 340,
+    height: 370, // Adjust map size
     marginHorizontal: 20,
     borderRadius: 15,
     overflow: 'hidden',
@@ -167,24 +191,63 @@ const styles = StyleSheet.create({
     backgroundColor: '#D3D3D3', 
     padding: 15,
     borderRadius: 10,
-    width: 370,
-    height: 70,
-    // alignItems: 'left',
-    justifyContent: 'space-between',
+    width: 346,
+    height: 220,
+    //alignItems: 'left',
+    //justifyContent: 'space-between',
     marginTop: 20,
     marginBottom: 20,
+    alignSelf: 'center',
   }, 
-  square: {
-    width: 24,
-    height: 24,
-    backgroundColor: '#FFFF',
+  profilepic: {
+    width: 45,
+    height: 45,
+    marginHorizontal: -5,
+    marginVertical: 2,
   }, 
   names: {
-    fontSize: 20,
+    fontSize: 19,
     fontWeight: 'bold',
     flexDirection: 'row',
     alignItems: 'center',
   }, 
+  person: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    flexDirection: 'row',
+    alignItems: 'center',
+    wordWrap: 'row',
+    marginVertical: -35,
+    marginHorizontal: 50,
+  }, 
+  personLoc: {
+     fontSize: 17,
+     fontStyle: 'italic',
+     marginVertical: 14,
+     marginLeft: 150,
+     //textAlign: 'right'
+  }, 
+  personLocTwo: {
+    fontSize: 17,
+    fontStyle: 'italic',
+    marginVertical: 14,
+    marginLeft: 158,
+    //textAlign: 'right'
+ }, 
+ personLocThree: {
+  fontSize: 17,
+  fontStyle: 'italic',
+  marginVertical: 14,
+  marginLeft: 135,
+  //textAlign: 'right'
+}, 
+personLocFour: {
+  fontSize: 17,
+  fontStyle: 'italic',
+  marginVertical: 14,
+  marginLeft: 113,
+  //textAlign: 'right'
+}, 
 });
 
 export default FriendsScreen;
