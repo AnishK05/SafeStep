@@ -7,12 +7,9 @@ import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes'; // Import the param list
-<<<<<<< HEAD
 import { useTheme } from '../../contexts/ThemeContext';
-=======
 import { SafeAreaView } from 'react-native-safe-area-context';
 
->>>>>>> 6c57be1a8739dde0b35ff39d27b3293056ee805b
 
 type Coordinates = {
   latitude: number;
