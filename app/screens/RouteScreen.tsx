@@ -7,6 +7,7 @@ import { RootStackParamList } from '../../navigation/navigationTypes';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { getDirections } from '../../utils/directionsService';
 import { useTheme } from '../../contexts/ThemeContext';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 type Coordinates = {
   latitude: number;
@@ -184,10 +185,8 @@ const RouteScreen = () => {
   return (
     <View style={[styles(isDarkTheme).container]}>
       <TouchableOpacity style={styles(isDarkTheme).backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color={isDarkTheme ? 'white' : 'white'} />
+        <Ionicons name="arrow-back" size={28} color={isDarkTheme ? 'white' : 'white'} />
       </TouchableOpacity>
-
-      <Text style={styles(isDarkTheme).screenTitle}>Route Preview</Text>
 
       <MapView
         style={styles(isDarkTheme).map}
@@ -233,7 +232,7 @@ const RouteScreen = () => {
             <MaterialIcons name="security" size={30} color={getIconColor(selectedRouteMetadata.crimeLevel)} />
             <Ionicons name="bulb-outline" size={30} color={getIconColor(selectedRouteMetadata.lightingCondition)} />
             <Ionicons name="people-outline" size={30} color={getIconColor(selectedRouteMetadata.activityStatus)} />
-            <Ionicons name="construct-outline" size={30} color={getIconColor(selectedRouteMetadata.constructionLevel)} />
+            <FontAwesome6 name="road-barrier" size={30} color={getIconColor(selectedRouteMetadata.constructionLevel)} />
           </View>
 
           <View style={styles(isDarkTheme).safetyRatingRow}>
@@ -269,22 +268,25 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    paddingTop: 60,
     paddingBottom: 20,
-    paddingHorizontal: 5,
     backgroundColor: isDarkTheme ? '#0b1a34' : '#f5f5f5',
   },
   map: {
     flex: 1,
+    borderRadius: 15,
   },
   backButton: {
+    position: 'absolute',
+    top: 50,
+    left: 15,
+    zIndex: 10, 
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: isDarkTheme ? '#1c2a48' : 'black',
     borderRadius: 50,
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     margin: 10,
     shadowColor: '#000',
     shadowOpacity: 0.2,
@@ -292,7 +294,7 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     shadowRadius: 4,
   },
   screenTitle: {
-    fontSize: 24,
+    fontSize: 20,
     textAlign: 'center',
     fontWeight: 'bold',
     color: isDarkTheme ? '#ffffff' : '#000000',
