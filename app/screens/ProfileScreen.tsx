@@ -18,8 +18,22 @@ type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Prof
 const ProfileScreen = () => {
   const navigation = useNavigation<ProfileScreenNavigationProp>();
   const [isLocationEnabled, setIsLocationEnabled] = useState(true);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isDarkEnabled, setIsDarkEnabled] = useState(true);
+  
+  const [profileImage, setProfileImage] = useState<string>(
+    'https://alcalde.texasexes.org/bevoxv/img/bevomobile.jpg'
+  );
+
+  
+  
   const { isDarkTheme, toggleTheme } = useTheme();
+  const imageUri = profileImage || 'https://alcalde.texasexes.org/bevoxv/img/bevomobile.jpg';
+
+<Image
+  source={{ uri: imageUri }}
+  style={styles(isDarkTheme).profileImage}
+/>
+
 
   const saveImageToStorage = async (uri: string) => {
     try {
@@ -39,6 +53,7 @@ const ProfileScreen = () => {
       console.error('Failed to load profile image:', error);
     }
   };
+  
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -46,19 +61,21 @@ const ProfileScreen = () => {
       Alert.alert('Permission denied', 'Need access to camera roll.');
       return;
     }
-
+  
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
-
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
-      saveImageToStorage(result.assets[0].uri);
+  
+    if (!result.canceled && result.assets?.length) {
+      const uri = result.assets[0].uri;
+      setProfileImage(uri);
+      saveImageToStorage(uri);
     }
   };
+  
 
   useEffect(() => {
     loadImageFromStorage();
@@ -79,22 +96,17 @@ const ProfileScreen = () => {
               <Ionicons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
 
-            {/* Theme Toggle Button */}
-          <TouchableOpacity onPress={toggleTheme} style={styles(isDarkTheme).themeToggleButton}>
-            <Ionicons
-              name={isDarkTheme ? 'sunny' : 'moon'}
-              size={28}
-              color={isDarkTheme ? '#ffcc00' : '#555'}
-            />
-          </TouchableOpacity>
-
             {/* Profile Screen Content */}
             <ScrollView contentContainerStyle={styles(isDarkTheme).scrollViewContent}>
               {/* Profile Header */}
               <TouchableOpacity style={styles(isDarkTheme).profileHeader} onPress={pickImage}>
+              <View style={styles(isDarkTheme).profileHeader}>
+
                 <View style={styles(isDarkTheme).profileImageContainer}>
                   <Image
-                    source={{ uri: profileImage || 'https://via.placeholder.com/100' }}
+                    source={{
+                      uri:'https://alcalde.texasexes.org/bevoxv/img/bevomobile.jpg',
+                    }}
                     style={styles(isDarkTheme).profileImage}
                   />
                   {!profileImage && (
@@ -102,7 +114,9 @@ const ProfileScreen = () => {
                   )}
                 </View>
                 <Text style={styles(isDarkTheme).profileName}>Sarah Price</Text>
+                </View>
               </TouchableOpacity>
+
 
 
               {/* Profile Buttons */}
@@ -112,7 +126,7 @@ const ProfileScreen = () => {
                   <Text style={[styles(isDarkTheme).profileButtonText, { color: '#cd1c18' }]}>SOS</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles(isDarkTheme).profileButton}>
-                  <Ionicons name="analytics" size={30} color={isDarkTheme ? 'white' : 'black'} />
+                  <Ionicons name="analytics" size={34} color={isDarkTheme ? 'white' : 'black'} />
                   <Text style={styles(isDarkTheme).profileButtonText}>Activity</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles(isDarkTheme).profileButton}>
@@ -124,26 +138,38 @@ const ProfileScreen = () => {
               {/* Profile Options with left-aligned text */}
               <View style={styles(isDarkTheme).profileOptions}>
                 <View style={styles(isDarkTheme).option}>
-                <FontAwesome name="location-arrow" size={24} color={isDarkTheme ? 'white' : 'black'} />
+                <FontAwesome name="location-arrow" size={22} color={isDarkTheme ? 'white' : 'black'} />
                   <Text style={styles(isDarkTheme).optionText}>Share My Location</Text>
                   <View style={styles(isDarkTheme).switchContainer}>
                     <Switch value={isLocationEnabled} onValueChange={setIsLocationEnabled} />
                   </View>
                 </View>
+            
                 <TouchableOpacity style={styles(isDarkTheme).option}>
-                  <MaterialCommunityIcons name="hospital" size={24} color={isDarkTheme ? 'white' : 'black'} />
+                  <MaterialCommunityIcons name="hospital" size={22} color={isDarkTheme ? 'white' : 'black'} />
                   <Text style={styles(isDarkTheme).optionText}>Emergency Contacts</Text>
                 </TouchableOpacity>
+                
                 <TouchableOpacity style={styles(isDarkTheme).option}>
-                  <Ionicons name="help-circle" size={24} color={isDarkTheme ? 'white' : 'black'} />
+                  <Ionicons name="help-circle" size={22} color={isDarkTheme ? 'white' : 'black'} />
                   <Text style={styles(isDarkTheme).optionText}>Help</Text>
                 </TouchableOpacity>
+                <View style={styles(isDarkTheme).option}>
+                  <Ionicons name="moon" size={20} color={isDarkTheme ? 'white' : 'black'} />
+                  <Text style={styles(isDarkTheme).optionText}>Dark Mode</Text>
+                  <View style={styles(isDarkTheme).switchContainer}>
+                  <Switch
+                    value={isDarkTheme}
+                    onValueChange={toggleTheme} // Use the toggleTheme function for switching dark mode
+                  />
+                  </View>
+                </View>
                 <TouchableOpacity style={styles(isDarkTheme).option}>
-                  <Ionicons name="information-circle" size={24} color={isDarkTheme ? 'white' : 'black'} />
+                  <Ionicons name="information-circle" size={22} color={isDarkTheme ? 'white' : 'black'} />
                   <Text style={styles(isDarkTheme).optionText}>About</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles(isDarkTheme).option}>
-                  <Ionicons name="log-out" size={24} color={isDarkTheme ? 'white' : 'black'} />
+                  <Ionicons name="log-out" size={22} color={isDarkTheme ? 'white' : 'black'} />
                   <Text style={styles(isDarkTheme).optionText}>Log Out</Text>
                 </TouchableOpacity>
               </View>
@@ -165,7 +191,7 @@ const ProfileScreen = () => {
               <Text style={styles(isDarkTheme).navText}>Friends</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles(isDarkTheme).navItem} onPress={() => navigation.navigate('Profile')}>
-              <Ionicons name="person" size={24} color="#54A2C9" />
+              <Ionicons name="person" size={24} color="white" />
               <Text style={styles(isDarkTheme).navText}>Profile</Text>
             </TouchableOpacity>
           </View>
@@ -238,12 +264,13 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: isDarkTheme ? '#ffffff' : '#000000',
+    paddingBottom: 10,
   },
   profileButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
-    paddingVertical: 20,
+    paddingVertical: 0,
     color: isDarkTheme ? '#585D69' : '#ddd',
     
   },
@@ -251,7 +278,7 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     flex: 1,
     backgroundColor: isDarkTheme ? '#585D69' : '#ddd', // Dynamically set background color
     borderRadius: 10,
-    paddingVertical: 20,
+    paddingVertical: 10,
     marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -259,9 +286,11 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
   },
 
   profileButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     textAlign: 'center',
+    marginTop: 10,
     color: isDarkTheme ? '#F1F1F1' : '#191C24', // Dynamic text color
+    fontWeight: 'bold',
   },  
   profileOptions: {
     paddingHorizontal: 20,
@@ -275,7 +304,7 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     borderBottomColor: '#ccc',
   },
   optionText: {
-    fontSize: 18,
+    fontSize: 16,
     marginLeft: 10, // Space between icon and text
     color: isDarkTheme ? '#F1F1F1' : '#191C24', // Dynamic text color
   },

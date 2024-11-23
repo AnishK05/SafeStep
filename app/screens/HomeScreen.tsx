@@ -11,6 +11,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
+
 type Coordinates = {
   latitude: number;
   longitude: number;
