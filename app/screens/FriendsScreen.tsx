@@ -91,18 +91,33 @@ const FriendsScreen = () => {
 
         <ScrollView style={styles(isDarkTheme).friends}>
           <Text style={styles(isDarkTheme).names}>Friends</Text>
-          <Image source ={require('../assets/images/upclosecat.png')} style={styles(isDarkTheme).profilepic} />
-          <Text style={styles(isDarkTheme).person}>April Parker</Text>
-          <Text style={styles(isDarkTheme).personLoc}>Austin, TX, Now</Text>
-          <Image source ={require('../assets/images/logan.png')} style={styles(isDarkTheme).profilepic} />
-          <Text style={styles(isDarkTheme).person}>Logan Sharp</Text>
-          <Text style={styles(isDarkTheme).personLocTwo}>Austin, TX, 5 min. ago</Text>
-          <Image source ={require('../assets/images/gus.png')} style={styles(isDarkTheme).profilepic} />
-          <Text style={styles(isDarkTheme).person}>Gus Page</Text>
-          <Text style={styles(isDarkTheme).personLocThree}>Austin, TX, 7 min. ago</Text>
-          <Image source ={require('../assets/images/ari.png')} style={styles(isDarkTheme).profilepic} />
-          <Text style={styles(isDarkTheme).person}>Ari Lee</Text>
-          <Text style={styles(isDarkTheme).personLocFour}>Kyle, TX, 12 min. ago</Text>
+
+          
+
+          <View style={styles(isDarkTheme).personTest}>  
+            <Image source ={require('../assets/images/upclosecat.png')} style={styles(isDarkTheme).profilepic} />
+            <Text style={styles(isDarkTheme).person}>April Parker</Text>
+            <Text style={styles(isDarkTheme).personLoc}>Austin, TX, Now</Text>
+          </View>
+
+          <View style={styles(isDarkTheme).personTest}>  
+            <Image source ={require('../assets/images/logan.png')} style={styles(isDarkTheme).profilepic} />
+            <Text style={styles(isDarkTheme).person}>Logan Parker</Text>
+            <Text style={styles(isDarkTheme).personLoc}>Austin, TX, 5 min. ago</Text>
+          </View>
+
+          <View style={styles(isDarkTheme).personTest}>  
+            <Image source ={require('../assets/images/gus.png')} style={styles(isDarkTheme).profilepic} />
+            <Text style={styles(isDarkTheme).person}>Gus Page</Text>
+            <Text style={styles(isDarkTheme).personLoc}>Austin, TX, 7 min. ago</Text>
+          </View>
+
+          <View style={styles(isDarkTheme).personTest}>  
+            <Image source ={require('../assets/images/ari.png')} style={styles(isDarkTheme).profilepic} />
+            <Text style={styles(isDarkTheme).person}>Ari Lee</Text>
+            <Text style={styles(isDarkTheme).personLoc}>Kyle, TX, 12 min. ago</Text>
+          </View>
+          
         </ScrollView>
 
       {/* Bottom Navigation Bar */}
@@ -177,22 +192,6 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  // bottomNav: {
-  //   position: 'absolute', // Position it absolutely
-  //   bottom: 0, // Align to the bottom of the screen
-  //   left: 0,
-  //   right: 0,
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-around',
-  //   alignItems: 'center',
-  //   paddingVertical: 10,
-  //   paddingBottom: 50, // Add padding for bottom navigation
-  //   backgroundColor: '#fff',
-  //   shadowColor: '#000',
-  //   shadowOpacity: 0.1,
-  //   shadowOffset: { width: 0, height: 2 },
-  //   shadowRadius: 4,
-  // },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -239,9 +238,8 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
   profilepic: {
     width: 45,
     height: 45,
-    paddingLeft: 0,
-    paddingTop: 2,
-    paddingBottom: 0,
+    //alignSelf: 'flex-start',
+   // paddingRight: 10,
   }, 
   names: {
     fontSize: 19,
@@ -254,17 +252,21 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     fontSize: 17,
     fontWeight: 'bold',
     flexDirection: 'row',
-    alignItems: 'center',
+    //alignItems: 'center',
     wordWrap: 'row',
-    marginVertical: -35,
-    paddingLeft: 55,
+    //marginVertical: -35,
+    marginLeft: 10,
+    //resizeMode: 'contain',
+    //padding: 0,
+    
     color: isDarkTheme ? '#ffffff' : '#000000',
   }, 
   personLoc: {
      fontSize: 17,
      fontStyle: 'italic',
-     marginVertical: 14,
-     paddingLeft: 155,
+     paddingLeft: 10,
+     //paddingRight: 0,
+     justifyContent: 'space-between',
      color: isDarkTheme ? '#ffffff' : '#000000',
   }, 
   personLocTwo: {
@@ -272,6 +274,7 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     fontStyle: 'italic',
     marginVertical: 14,
     paddingLeft: 164,
+    //alignSelf: 'flex-end',
     color: isDarkTheme ? '#ffffff' : '#000000',
  }, 
  personLocThree: {
@@ -295,6 +298,12 @@ callout: {
   // marginLeft: 113,
   // color: isDarkTheme ? '#ffffff' : '#000000',
 }, 
+personTest: {
+  //justifyContent: 'space-between',
+  flexDirection: 'row',
+  alignItems: 'center',
+},
+
 });
 
 export default FriendsScreen;
