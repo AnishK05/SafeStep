@@ -247,7 +247,7 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
   },
   profileImageContainer: {
     position: 'relative',
-    paddingBottom: 10,
+    paddingBottom: 15,
   },
   profileImage: {
     width: 100,
