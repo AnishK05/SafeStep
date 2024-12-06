@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert, Switch } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackParamList } from '../../navigation/navigationTypes';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useTheme } from '../../contexts/ThemeContext';
+import Entypo from '@expo/vector-icons/Entypo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;
 
@@ -13,11 +18,32 @@ const ProfileScreen = () => {
   const navigation = useNavigation<ProfileScreenNavigationProp>();
   const [isLocationEnabled, setIsLocationEnabled] = useState(true);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const { isDarkTheme, toggleTheme } = useTheme();
+  const route = useRoute(); // Get the current route
+
+  const saveImageToStorage = async (uri: string) => {
+    try {
+      await AsyncStorage.setItem('profileImage', uri);
+    } catch (error) {
+      console.error('Failed to save profile image:', error);
+    }
+  };
+
+  const loadImageFromStorage = async () => {
+    try {
+      const savedImage = await AsyncStorage.getItem('profileImage');
+      if (savedImage) {
+        setProfileImage(savedImage);
+      }
+    } catch (error) {
+      console.error('Failed to load profile image:', error);
+    }
+  };
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission denied', 'Sorry, we need camera roll permissions to make this work!');
+      Alert.alert('Permission denied', 'Need access to camera roll.');
       return;
     }
 
@@ -30,123 +56,184 @@ const ProfileScreen = () => {
 
     if (!result.canceled) {
       setProfileImage(result.assets[0].uri);
+      saveImageToStorage(result.assets[0].uri);
     }
   };
 
+  useEffect(() => {
+    loadImageFromStorage();
+  }, []);
+
+  const isActive = (routeName: string) => route.name === routeName;
+
+   // Colors for active and inactive states
+   const activeColor = isDarkTheme ? 'white' : '#585d69';
+   const inactiveColor = isDarkTheme ? 'rgba(204, 204, 204, 0.5)' : 'rgba(128, 128, 128, 0.5)'; // Duller color with lower opacity for inactive icons
+
+
   return (
-    <View style={styles.container}>
+    <View style={styles(isDarkTheme).container}>
+      
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <SafeAreaView style={{ flex: 1 }}>
-          <View style={styles.contentContainer}>
+          <View style={styles(isDarkTheme).contentContainer}>
             {/* Back Button */}
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <TouchableOpacity style={styles(isDarkTheme).backButton} onPress={() => navigation.goBack()}>
               <Ionicons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
 
+            {/* Theme Toggle Button */}
+          <TouchableOpacity onPress={toggleTheme} style={styles(isDarkTheme).themeToggleButton}>
+            <Ionicons
+              name={isDarkTheme ? 'sunny' : 'moon'}
+              size={28}
+              color={isDarkTheme ? '#ffcc00' : '#555'}
+            />
+          </TouchableOpacity>
+
             {/* Profile Screen Content */}
-            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            <ScrollView contentContainerStyle={styles(isDarkTheme).scrollViewContent}>
               {/* Profile Header */}
-              <TouchableOpacity style={styles.profileHeader} onPress={pickImage}>
-                <View style={styles.profileImageContainer}>
+              <TouchableOpacity style={styles(isDarkTheme).profileHeader} onPress={pickImage}>
+                <View style={styles(isDarkTheme).profileImageContainer}>
                   <Image
                     source={{ uri: profileImage || 'https://via.placeholder.com/100' }}
-                    style={styles.profileImage}
+                    style={styles(isDarkTheme).profileImage}
                   />
                   {!profileImage && (
-                    <Ionicons name="add-circle" size={30} color="gray" style={styles.plusIcon} />
+                    <Entypo name="circle-with-plus" size={24} color="black" style={styles(isDarkTheme).plusIcon} />
                   )}
                 </View>
-                <Text style={styles.profileName}>Sarah Price</Text>
+                <Text style={styles(isDarkTheme).profileName}>Sarah Price</Text>
               </TouchableOpacity>
 
+
               {/* Profile Buttons */}
-              <View style={styles.profileButtonsContainer}>
-                <TouchableOpacity style={styles.profileButton}>
+              <View style={styles(isDarkTheme).profileButtonsContainer}>
+                <TouchableOpacity style={styles(isDarkTheme).profileButton}>
                   <Ionicons name="warning" size={30} color="#cd1c18" />
-                  <Text style={[styles.profileButtonText, { color: '#cd1c18' }]}>SOS</Text>
+                  <Text style={[styles(isDarkTheme).profileButtonText, { color: '#cd1c18' }]}>SOS</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.profileButton}>
-                  <Ionicons name="analytics" size={30} color="black" />
-                  <Text style={styles.profileButtonText}>Activity</Text>
+                <TouchableOpacity style={styles(isDarkTheme).profileButton}>
+                  <Ionicons name="analytics" size={30} color={isDarkTheme ? 'white' : 'black'} />
+                  <Text style={styles(isDarkTheme).profileButtonText}>Activity</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.profileButton}>
-                  <Ionicons name="settings" size={30} color="black" />
-                  <Text style={styles.profileButtonText}>Settings</Text>
+                <TouchableOpacity style={styles(isDarkTheme).profileButton}>
+                  <Ionicons name="settings" size={30} color={isDarkTheme ? 'white' : 'black'} />
+                  <Text style={styles(isDarkTheme).profileButtonText}>Settings</Text>
                 </TouchableOpacity>
               </View>
 
               {/* Profile Options with left-aligned text */}
-              <View style={styles.profileOptions}>
-                <View style={styles.option}>
-                  <Ionicons name="location-outline" size={24} color="black" />
-                  <Text style={styles.optionText}>Share My Location</Text>
-                  <View style={styles.switchContainer}>
+              <View style={styles(isDarkTheme).profileOptions}>
+                <View style={styles(isDarkTheme).option}>
+                <FontAwesome name="location-arrow" size={24} color={isDarkTheme ? 'white' : 'black'} />
+                  <Text style={styles(isDarkTheme).optionText}>Share My Location</Text>
+                  <View style={styles(isDarkTheme).switchContainer}>
                     <Switch value={isLocationEnabled} onValueChange={setIsLocationEnabled} />
                   </View>
                 </View>
-                <TouchableOpacity style={styles.option}>
-                  <Ionicons name="person-add-outline" size={24} color="black" />
-                  <Text style={styles.optionText}>Emergency Contacts</Text>
+                <TouchableOpacity style={styles(isDarkTheme).option}>
+                  <MaterialCommunityIcons name="hospital" size={24} color={isDarkTheme ? 'white' : 'black'} />
+                  <Text style={styles(isDarkTheme).optionText}>Emergency Contacts</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.option}>
-                  <Ionicons name="help-circle-outline" size={24} color="black" />
-                  <Text style={styles.optionText}>Help</Text>
+                <TouchableOpacity style={styles(isDarkTheme).option}>
+                  <Ionicons name="help-circle" size={24} color={isDarkTheme ? 'white' : 'black'} />
+                  <Text style={styles(isDarkTheme).optionText}>Help</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.option}>
-                  <Ionicons name="information-circle-outline" size={24} color="black" />
-                  <Text style={styles.optionText}>About</Text>
+                <TouchableOpacity style={styles(isDarkTheme).option}>
+                  <Ionicons name="information-circle" size={24} color={isDarkTheme ? 'white' : 'black'} />
+                  <Text style={styles(isDarkTheme).optionText}>About</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.option}>
-                  <Ionicons name="log-out-outline" size={24} color="black" />
-                  <Text style={styles.optionText}>Log Out</Text>
+                <TouchableOpacity style={styles(isDarkTheme).option}>
+                  <Ionicons name="log-out" size={24} color={isDarkTheme ? 'white' : 'black'} />
+                  <Text style={styles(isDarkTheme).optionText}>Log Out</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
           </View>
 
           {/* Bottom Navigation Bar */}
-          <View style={styles.bottomNav}>
-            <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
-              <Ionicons name="home" size={24} color="gray" />
-              <Text style={styles.navText}>Home</Text>
+          <View style={styles(isDarkTheme).bottomNav}>
+            <TouchableOpacity style={styles(isDarkTheme).navItem} onPress={() => navigation.navigate('Home')}>
+              <Ionicons
+                name="home"
+                size={24}
+                color={isActive('Home') ? activeColor : inactiveColor}
+              />
+              <Text style={[styles(isDarkTheme).navText, { color: isActive('Home') ? activeColor : inactiveColor }]}>
+                Home
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Favorites')}>
-              <FontAwesome name="star" size={24} color="gray" />
-              <Text style={styles.navText}>Favorites</Text>
+            <TouchableOpacity style={styles(isDarkTheme).navItem} onPress={() => navigation.navigate('Favorites')}>
+              <FontAwesome
+                name="star"
+                size={24}
+                color={isActive('Favorites') ? activeColor : inactiveColor}
+              />
+              <Text style={[styles(isDarkTheme).navText, { color: isActive('Favorites') ? activeColor : inactiveColor }]}>
+                Favorites
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Friends')}>
-              <FontAwesome name="smile-o" size={24} color="gray" />
-              <Text style={styles.navText}>Friends</Text>
+            <TouchableOpacity style={styles(isDarkTheme).navItem} onPress={() => navigation.navigate('Friends')}>
+              <FontAwesome
+                name="smile-o"
+                size={24}
+                color={isActive('Friends') ? activeColor : inactiveColor}
+              />
+              <Text style={[styles(isDarkTheme).navText, { color: isActive('Friends') ? activeColor : inactiveColor }]}>
+                Friends
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profile')}>
-              <Ionicons name="person" size={24} color="gray" />
-              <Text style={styles.navText}>Profile</Text>
+            <TouchableOpacity style={styles(isDarkTheme).navItem} onPress={() => navigation.navigate('Profile')}>
+              <Ionicons
+                name="person"
+                size={24}
+                color={isActive('Profile') ? activeColor : inactiveColor}
+              />
+              <Text style={[styles(isDarkTheme).navText, { color: isActive('Profile') ? activeColor : inactiveColor }]}>
+                Profile
+              </Text>
             </TouchableOpacity>
           </View>
+
         </SafeAreaView>
       </KeyboardAvoidingView>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = (isDarkTheme: boolean) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: isDarkTheme ? '#0b1a34' : '#f5f5f5', // Super dark blue background for dark theme
+  },
+  themeToggleButton: {
+    position: 'absolute',
+    top: 20,
+    right: 15,
+    width: 80, 
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
+    zIndex: 1,
+    backgroundColor: isDarkTheme ? '#1c2a48' : '#ddd',
   },
   contentContainer: {
     flex: 1,
     paddingTop: 20,
     paddingHorizontal: 5,
+    
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black',
+    backgroundColor: isDarkTheme ? '#1c2a48' : 'black',
     borderRadius: 50,
     width: 40,
     height: 40,
@@ -155,6 +242,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
+    
   },
   scrollViewContent: {
     paddingBottom: 20, // Adds spacing for scrolling content
@@ -164,31 +252,35 @@ const styles = StyleSheet.create({
   },
   profileImageContainer: {
     position: 'relative',
+    paddingBottom: 10,
   },
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginBottom: 10,
   },
   plusIcon: {
     position: 'absolute',
     bottom: 5,
     right: 5,
+    color: isDarkTheme ? '#ffffff' : '#000000',
   },
   profileName: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: isDarkTheme ? '#ffffff' : '#000000',
   },
   profileButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    color: isDarkTheme ? '#585D69' : '#ddd',
+    
   },
   profileButton: {
     flex: 1,
-    backgroundColor: '#ddd',
+    backgroundColor: isDarkTheme ? '#1c2a48' : '#ddd', // Dynamically set background color
     borderRadius: 10,
     paddingVertical: 20,
     marginHorizontal: 5,
@@ -196,10 +288,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
   },
+
   profileButtonText: {
     fontSize: 16,
     textAlign: 'center',
-  },
+    color: isDarkTheme ? '#F1F1F1' : '#191C24', // Dynamic text color
+  },  
   profileOptions: {
     paddingHorizontal: 20,
   },
@@ -207,13 +301,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start', // Align text to the left
     alignItems: 'center',
-    paddingVertical: 15,
+    paddingVertical: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
   optionText: {
     fontSize: 18,
     marginLeft: 10, // Space between icon and text
+    color: isDarkTheme ? '#F1F1F1' : '#191C24', // Dynamic text color
   },
   switchContainer: {
     position: 'absolute', // Take the Switch out of the regular flow
@@ -229,18 +324,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     paddingBottom: 50, // Add padding for bottom navigation
-    backgroundColor: '#fff',
+    backgroundColor: isDarkTheme ? '#1c2a48' : '#ffffff',
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
+    
   },
   navItem: {
     alignItems: 'center',
   },
   navText: {
     fontSize: 12, // Adjust text size for the bottom navigation
-    color: 'gray',
+    color: isDarkTheme ? '#ffffff' : '#1c2a48',
   },
 });
 
