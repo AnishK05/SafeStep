@@ -55,4 +55,5 @@ These statistics demonstrate a clear need for a tool that prioritizes personal s
 ## Demo Video and Pitch 
 
 [Click here to view the demo video](#)
+
 [Click here to view our pitch](#)
