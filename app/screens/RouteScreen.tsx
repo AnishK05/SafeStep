@@ -167,16 +167,16 @@ const RouteScreen = () => {
       case "Well-Lighted":
       case "Busy":
       case "None":
-        return "green";
+        return "#7DCE82";
       case "Moderate":
       case "Moderately-Lighted":
       case "Moderate Activity":
-        return "orange";
+        return "#F39237";
       case "High":
       case "Poorly-Lighted":
       case "Quiet":
       case "Heavy":
-        return "red";
+        return "#D63230";
       default:
         return "gray";
     }
