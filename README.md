@@ -2,7 +2,7 @@
 
 SafeStep is a safety-focused navigation app that provides users with safer walking routes in urban areas. By leveraging crowdsourced data, real-time updates, and safety flags, SafeStep empowers users to make informed decisions about their routes, ensuring peace of mind while walking.
 
-![SafeStep HomePage](/SafeStep/app/assets/images/homepage.jpg)
+![SafeStep HomePage](/app/assets/images/homepage.jpg)
 
 ---
 
