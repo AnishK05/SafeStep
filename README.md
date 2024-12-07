@@ -4,6 +4,8 @@ SafeStep is a safety-focused navigation app that provides users with safer walki
 
 ![SafeStep HomePage](/app/assets/images/homepage.jpg)
 
+<img src="/app/assets/images/homepage.jpg" alt="SafeStep Intro" width="200"/>
+
 ---
 
 ## Motivation
