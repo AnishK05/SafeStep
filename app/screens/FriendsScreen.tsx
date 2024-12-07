@@ -44,81 +44,166 @@ const FriendsScreen = () => {
 
 
   return (
+
     <View style={styles(isDarkTheme).container}>
+
       <TouchableOpacity style={styles(isDarkTheme).backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color={isDarkTheme ? 'white' : 'white'} />
       </TouchableOpacity>
-      {/* <Text style={styles.screenTitle}>Friends Page</Text> */}
+      
       <View>
-      <MapView style={styles(isDarkTheme).mapArea}
-        initialRegion= {INITIAL_REGION}
-        showsUserLocation
-      >
-        <Marker style={styles(isDarkTheme).bluemarker} coordinate= {{
-          latitude: 30.2862398,
-          longitude: -97.7401890,
-        }}
-          image={require('../assets/images/aprilparker.png')}
-          title = "April Parker" 
-          description='Peter T. Flawn Center'
-      />
-        <Marker style={styles(isDarkTheme).bluemarker} coordinate= {{
-          latitude: 30.2840038,
-          longitude: -97.7366958,
-        }}
-          image={require('../assets/images/logansharp.png')}
-          title = "Logan Sharp"
-          description='Gregory Gymnasium'
-      />
-        <Marker style={styles(isDarkTheme).bluemarker} coordinate= {{
-          latitude: 30.2881416,
-          longitude: -97.7352159,
-        }}
-          image={require('../assets/images/guspage.png')}
-          title = "Gus Page"
-          description='University of TX College-Pharm'
-      />
-        <Marker style={styles(isDarkTheme).bluemarker} coordinate= {{
-          latitude: 29.9884212,
-          longitude: -97.8766528,
-        }}
-          image={require('../assets/images/arilee.png')}
-          title = "Ari Lee"
-          description='Mary Kyle Hartson Park'
-      />
-      </MapView>
-       </View>
+        <MapView style={styles(isDarkTheme).mapArea}
+          initialRegion= {INITIAL_REGION}
+          showsUserLocation
+        >
+          {/* Miranda */}
+          <Marker
+            coordinate={{
+              latitude: 30.2867,
+              longitude: -97.7412,
+            }}
+            title="Miranda"
+            description="Texas Union"
+            anchor={{ x: 0.5, y: 0.5 }}
+            calloutAnchor={{ x: 0.5, y: 0.3 }}
+          >
+            <View style={styles(isDarkTheme).markerContainer}>
+              <Image
+                source={require('../assets/images/miranda.png')}
+                style={styles(isDarkTheme).markerImage}
+              />
+            </View>
+          </Marker>
 
-        <ScrollView style={styles(isDarkTheme).friends}>
-          <Text style={styles(isDarkTheme).names}>Friends</Text>
+          {/* Anish */}
+          <Marker
+            coordinate={{
+              latitude: 30.2827,
+              longitude: -97.7382,
+            }}
+            title="Anish"
+            description="PCL"
+            anchor={{ x: 0.5, y: 0.5 }}
+            calloutAnchor={{ x: 0.5, y: 0.3 }}
+          >
+            <View style={styles(isDarkTheme).markerContainer}>
+              <Image
+                source={require('../assets/images/anish.png')}
+                style={styles(isDarkTheme).markerImage}
+              />
+            </View>
+          </Marker>
 
-          
+          {/* Krisha */}
+          <Marker
+            coordinate={{
+              latitude: 30.2840038,
+              longitude: -97.7366958,
+            }}
+            title="Krisha"
+            description="Gregory Gym"
+            anchor={{ x: 0.5, y: 0.5 }}
+            calloutAnchor={{ x: 0.5, y: 0.3 }}
+          >
+            <View style={styles(isDarkTheme).markerContainer}>
+              <Image
+                source={require('../assets/images/krisha.png')}
+                style={styles(isDarkTheme).markerImage}
+              />
+            </View>
+          </Marker>
 
-          <View style={styles(isDarkTheme).personTest}>  
-            <Image source ={require('../assets/images/upclosecat.png')} style={styles(isDarkTheme).profilepic} />
-            <Text style={styles(isDarkTheme).person}>April Parker</Text>
+          {/* Surya */}
+          <Marker
+            coordinate={{
+              latitude: 30.2881,
+              longitude: -97.7355,
+            }}
+            title="Surya"
+            description="EER"
+            anchor={{ x: 0.5, y: 0.5 }}
+            calloutAnchor={{ x: 0.5, y: 0.3 }}
+          >
+            <View style={styles(isDarkTheme).markerContainer}>
+              <Image
+                source={require('../assets/images/surya.png')}
+                style={styles(isDarkTheme).markerImage}
+              />
+            </View>
+          </Marker>
+
+          {/* Shreya */}
+          <Marker
+            coordinate={{
+              latitude: 30.28885,
+              longitude: -97.73835,
+            }}
+            title="Shreya"
+            description="Burdine Hall"
+            anchor={{ x: 0.5, y: 0.5 }}
+            calloutAnchor={{ x: 0.5, y: 0.3 }}
+          >
+            <View style={styles(isDarkTheme).markerContainer}>
+              <Image
+                source={require('../assets/images/shreya.png')}
+                style={styles(isDarkTheme).markerImage}
+              />
+            </View>
+          </Marker>
+        </MapView>
+      </View>
+
+      <Text style={styles(isDarkTheme).names}>Friends</Text>
+
+      <ScrollView style={styles(isDarkTheme).friends}>
+        
+        {/** Miranda */}
+        <View style={styles(isDarkTheme).friendItem}>
+          <Image source={require('../assets/images/miranda.png')} style={styles(isDarkTheme).profilepic} />
+          <View style={styles(isDarkTheme).friendInfo}>
+            <Text style={styles(isDarkTheme).person}>Miranda</Text>
             <Text style={styles(isDarkTheme).personLoc}>Austin, TX, Now</Text>
           </View>
+        </View>
 
-          <View style={styles(isDarkTheme).personTest}>  
-            <Image source ={require('../assets/images/logan.png')} style={styles(isDarkTheme).profilepic} />
-            <Text style={styles(isDarkTheme).person}>Logan Parker</Text>
-            <Text style={styles(isDarkTheme).personLoc}>Austin, TX, 5 min. ago</Text>
+        {/** Anish */}
+        <View style={styles(isDarkTheme).friendItem}>
+          <Image source={require('../assets/images/anish.png')} style={styles(isDarkTheme).profilepic} />
+          <View style={styles(isDarkTheme).friendInfo}>
+            <Text style={styles(isDarkTheme).person}>Anish</Text>
+            <Text style={styles(isDarkTheme).personLoc}>Austin, TX, 3 min. ago</Text>
           </View>
+        </View>
 
-          <View style={styles(isDarkTheme).personTest}>  
-            <Image source ={require('../assets/images/gus.png')} style={styles(isDarkTheme).profilepic} />
-            <Text style={styles(isDarkTheme).person}>Gus Page</Text>
-            <Text style={styles(isDarkTheme).personLoc}>Austin, TX, 7 min. ago</Text>
+        {/** Krisha */}
+        <View style={styles(isDarkTheme).friendItem}>
+          <Image source={require('../assets/images/krisha.png')} style={styles(isDarkTheme).profilepic} />
+          <View style={styles(isDarkTheme).friendInfo}>
+            <Text style={styles(isDarkTheme).person}>Krisha</Text>
+            <Text style={styles(isDarkTheme).personLoc}>Austin, TX, 15 min. ago</Text>
           </View>
+        </View>
 
-          <View style={styles(isDarkTheme).personTest}>  
-            <Image source ={require('../assets/images/ari.png')} style={styles(isDarkTheme).profilepic} />
-            <Text style={styles(isDarkTheme).person}>Ari Lee</Text>
-            <Text style={styles(isDarkTheme).personLoc}>Kyle, TX, 12 min. ago</Text>
+        {/** Surya */}
+        <View style={styles(isDarkTheme).friendItem}>
+          <Image source={require('../assets/images/surya.png')} style={styles(isDarkTheme).profilepic} />
+          <View style={styles(isDarkTheme).friendInfo}>
+            <Text style={styles(isDarkTheme).person}>Surya</Text>
+            <Text style={styles(isDarkTheme).personLoc}>Austin, TX, 32 min. ago</Text>
           </View>
-          
-        </ScrollView>
+        </View>
+
+        {/** Shreya */}
+        <View style={styles(isDarkTheme).friendItem}>
+          <Image source={require('../assets/images/shreya.png')} style={styles(isDarkTheme).profilepic} />
+          <View style={styles(isDarkTheme).friendInfo}>
+            <Text style={styles(isDarkTheme).person}>Shreya</Text>
+            <Text style={styles(isDarkTheme).personLoc}>Austin, TX, 28 min. ago</Text>
+          </View>
+        </View>
+
+        
+      </ScrollView>
 
       {/* Bottom Navigation Bar */}
       <View style={styles(isDarkTheme).bottomNav}>
@@ -187,10 +272,20 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
   },
-  screenTitle: {
-    fontSize: 24,
-    textAlign: 'center',
-    fontWeight: 'bold',
+  markerContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 22.5,
+    borderWidth: 1,
+    borderColor: '#54A2C9', // Blue ring color
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#54A2C9',
+  },
+  markerImage: {
+    width: 35, // Updated image size
+    height: 35,
+    borderRadius: 17.5, // Half of width/height for circular images
   },
   bottomNav: {
     flexDirection: 'row',
@@ -220,89 +315,54 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     borderRadius: 15,
     overflow: 'hidden',
   }, 
-  bluemarker: {
-    width: 50,
-    height: 50,
-  }, 
+  // Container styles
   friends: {
-    backgroundColor: isDarkTheme ? '#1c2a48' : '#D3D3D3', //backgroundColor: isDarkTheme ? '#0b1a34' : '#f5f5f5',
-    padding: 15,
-    borderRadius: 15,
-    //marginHorizontal: 0,
-    //width: 360,
-    height: 220,
-    marginTop: 20,
-    marginBottom: 20,
-    alignSelf: 'center',
-  }, 
-  profilepic: {
-    width: 45,
-    height: 45,
-    //alignSelf: 'flex-start',
-   // paddingRight: 10,
-  }, 
+    backgroundColor: isDarkTheme ? '#1c2a48' : '#f9f9f9',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingLeft: 20,
+    marginRight: 15,
+    marginLeft: 15,
+    marginBottom: 10,
+    borderRadius: 10,
+    flex: 1,
+  },
   names: {
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: 'bold',
+    color: isDarkTheme ? '#ffffff' : '#000000',
+    marginTop: 10,
+    marginBottom: 10, 
+    marginLeft: 20,
+  },
+  friendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    color: isDarkTheme ? '#ffffff' : '#000000',
-  }, 
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: isDarkTheme ? '#333' : '#e0e0e0',
+    paddingBottom: 10,
+  },
+  profilepic: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  friendInfo: {
+    flex: 1,
+  },
   person: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    flexDirection: 'row',
-    //alignItems: 'center',
-    wordWrap: 'row',
-    //marginVertical: -35,
-    marginLeft: 10,
-    //resizeMode: 'contain',
-    //padding: 0,
-    
+    fontSize: 16,
+    fontWeight: '600',
     color: isDarkTheme ? '#ffffff' : '#000000',
-  }, 
+    marginBottom: 4,
+  },
   personLoc: {
-     fontSize: 17,
-     fontStyle: 'italic',
-     paddingLeft: 10,
-     //paddingRight: 0,
-     justifyContent: 'space-between',
-     color: isDarkTheme ? '#ffffff' : '#000000',
-  }, 
-  personLocTwo: {
-    fontSize: 17,
+    fontSize: 14,
     fontStyle: 'italic',
-    marginVertical: 14,
-    paddingLeft: 164,
-    //alignSelf: 'flex-end',
-    color: isDarkTheme ? '#ffffff' : '#000000',
- }, 
- personLocThree: {
-  fontSize: 17,
-  fontStyle: 'italic',
-  marginVertical: 14,
-  paddingLeft: 138,
-  color: isDarkTheme ? '#ffffff' : '#000000',
-}, 
-personLocFour: {
-  fontSize: 17,
-  fontStyle: 'italic',
-  marginVertical: 15,
-  paddingLeft: 118,
-  color: isDarkTheme ? '#ffffff' : '#000000',
-}, 
-callout: {
-  // fontSize: 17,
-  // fontStyle: 'italic',
-  // marginVertical: 15,
-  // marginLeft: 113,
-  // color: isDarkTheme ? '#ffffff' : '#000000',
-}, 
-personTest: {
-  //justifyContent: 'space-between',
-  flexDirection: 'row',
-  alignItems: 'center',
-},
+    color: isDarkTheme ? '#cccccc' : '#666666',
+  },
 
 });
 

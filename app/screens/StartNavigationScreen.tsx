@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { useRoute } from '@react-navigation/native';
 import { LocationObject, watchPositionAsync, Accuracy } from 'expo-location';
 import { Magnetometer } from 'expo-sensors';
 import * as Speech from 'expo-speech';
 import { debounce } from 'lodash';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, FontAwesome6 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../contexts/ThemeContext';
 
@@ -14,7 +14,6 @@ type Coordinates = {
   latitude: number;
   longitude: number;
 };
-
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -52,6 +51,10 @@ const FirstPersonNavigationScreen = () => {
     longitude: currentLocation.longitude,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01
+  };
+
+  const handleActivityReport = (activity: string) => {
+    Alert.alert("Report Submitted", `Activity reported: ${activity}`);
   };
 
   const stripHtmlTags = (text: string): string => {
@@ -302,12 +305,32 @@ const FirstPersonNavigationScreen = () => {
         />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles(isDarkTheme).reportButton}>
-        <MaterialIcons name="report-problem" size={24} color="red" />
+      <TouchableOpacity
+        style={styles(isDarkTheme).constructionButton}
+        onPress={() => handleActivityReport("Construction")}
+      >
+        <FontAwesome6 name="road-barrier" size={22} color="orange" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles(isDarkTheme).constructionButton}>
-        <Ionicons name="construct-outline" size={24} color="orange" />
+      <TouchableOpacity
+        style={styles(isDarkTheme).reportButton}
+        onPress={() => handleActivityReport("Crime")}
+      >
+        <MaterialIcons name="security" size={24} color="red" />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles(isDarkTheme).lightButton}
+        onPress={() => handleActivityReport("Lighting Issue")}
+      >
+        <Ionicons name="bulb-outline" size={24} color="yellow" />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles(isDarkTheme).peopleButton}
+        onPress={() => handleActivityReport("Crowded Area")}
+      >
+        <Ionicons name="people" size={24} color="tan" />
       </TouchableOpacity>
 
     </View>
@@ -408,6 +431,18 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowColor: '#ffffff',
   },
+  constructionButton: {
+    position: 'absolute',
+    top: 340,
+    right: 20,
+    backgroundColor: '#2a4a8b',
+    padding: 15,
+    borderRadius: 50,
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowColor: '#ffffff',
+  },
   reportButton: {
     position: 'absolute',
     top: 410,
@@ -420,9 +455,21 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowColor: '#ffffff',
   },
-  constructionButton: {
+  lightButton: {
     position: 'absolute',
-    top: 340,
+    top: 480,
+    right: 20,
+    backgroundColor: '#2a4a8b',
+    padding: 15,
+    borderRadius: 50,
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowColor: '#ffffff',
+  },
+  peopleButton: {
+    position: 'absolute',
+    top: 550,
     right: 20,
     backgroundColor: '#2a4a8b',
     padding: 15,

@@ -115,7 +115,7 @@ const ProfileScreen = () => {
               <View style={styles(isDarkTheme).profileButtonsContainer}>
                 <TouchableOpacity style={styles(isDarkTheme).profileButton}>
                   <Ionicons name="warning" size={30} color="#cd1c18" />
-                  <Text style={[styles(isDarkTheme).profileButtonText, { color: '#cd1c18' }]}>SOS</Text>
+                  <Text style={[styles(isDarkTheme).profileButtonText, { color: '#cd1c18' }]}>Alert</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles(isDarkTheme).profileButton}>
                   <Ionicons name="analytics" size={30} color={isDarkTheme ? 'white' : 'black'} />
@@ -227,7 +227,6 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     paddingHorizontal: 5,
-    
   },
   backButton: {
     flexDirection: 'row',

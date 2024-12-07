@@ -57,15 +57,6 @@ const HomeScreen = () => {
 
   return (
     <View style={styles(isDarkTheme).container}>
-      {/* Theme Toggle Button */}
-      <TouchableOpacity onPress={toggleTheme} style={styles(isDarkTheme).themeToggleButton}>
-        <Ionicons
-          name={isDarkTheme ? 'sunny' : 'moon'}
-          size={28}
-          color={isDarkTheme ? '#ffcc00' : '#555'}
-        />
-      </TouchableOpacity>
-
       <FlatList
         data={recentLocations}
         keyExtractor={(item) => item.id.toString()}
@@ -163,18 +154,6 @@ const styles = (isDarkTheme: boolean) => StyleSheet.create({
     flex: 1,
     backgroundColor: isDarkTheme ? '#0b1a34' : '#f5f5f5', // Super dark blue background for dark theme
     paddingTop: 60,
-  },
-  themeToggleButton: {
-    position: 'absolute',
-    top: 50,
-    right: 15,
-    width: 80, 
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 25,
-    zIndex: 1,
-    backgroundColor: isDarkTheme ? '#1c2a48' : '#ddd',
   },
   logoContainer: {
     alignItems: 'center',
