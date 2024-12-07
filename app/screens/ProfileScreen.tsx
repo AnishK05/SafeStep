@@ -29,6 +29,10 @@ const ProfileScreen = () => {
     }
   };
 
+  const handleActivityReport = () => {
+    Alert.alert("Friends Alerted", `Your friends have been alerted!`);
+  };
+
   const loadImageFromStorage = async () => {
     try {
       const savedImage = await AsyncStorage.getItem('profileImage');
@@ -113,7 +117,10 @@ const ProfileScreen = () => {
 
               {/* Profile Buttons */}
               <View style={styles(isDarkTheme).profileButtonsContainer}>
-                <TouchableOpacity style={styles(isDarkTheme).profileButton}>
+                <TouchableOpacity 
+                  style={styles(isDarkTheme).profileButton}
+                  onPress={() => handleActivityReport()}
+                >
                   <Ionicons name="warning" size={30} color="#cd1c18" />
                   <Text style={[styles(isDarkTheme).profileButtonText, { color: '#cd1c18' }]}>Alert</Text>
                 </TouchableOpacity>
