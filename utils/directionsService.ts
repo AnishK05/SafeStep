@@ -31,18 +31,18 @@ export const getDirections = async (
     const json = await response.json();
 
     if (json.status !== 'OK') {
-      console.error('Google Directions API error:', json.status);
-      throw new Error(`Google Directions API error: ${json.status}`);
+      //console.error('Google Directions API error:', json.status);
+      //throw new Error(`Google Directions API error: ${json.status}`);
     }
 
     if (json.routes && json.routes.length > 0) {
       // Return all route data, including legs, for flexibility
       return json.routes.map((route: Route) => route);
-    } else {
-      throw new Error("No routes found");
+    } 
+    else {
+      return [];
     }
   } catch (error) {
-    console.error("Error fetching directions:", error);
-    throw error;
+      return [];
   }
 };
