@@ -89,7 +89,31 @@ const RouteScreen = () => {
     if (destination) {
       getDirections(currentLocation, destination)
         .then((routesData) => {
-          if (Array.isArray(routesData)) {
+            if (Array.isArray(routesData)) {
+
+            if (!Array.isArray(routesData) || routesData.length === 0) {
+              // Handle the case where no routes are found
+              Alert.alert(
+                'No Routes Found',
+                'No walkable routes found, please try a different location.'
+              );
+              return; // Exit early
+            }
+
+            // Check for routes that exceed the duration limit
+            const tooLongRoute = routesData.find(route => {
+              const durationValue = route.legs[0]?.duration?.value; // Duration in seconds
+              return durationValue > 28800; // 2 hours in seconds
+            });
+
+            if (tooLongRoute) {
+              Alert.alert(
+                'Route Too Long',
+                'This route is too long. Please try a closer destination.'
+              );
+              return; // Exit early
+            }
+
             const allRoutes = routesData.map(route =>
               route.legs[0].steps.map((step: any) => ({
                 latitude: step.end_location.lat,
@@ -114,13 +138,21 @@ const RouteScreen = () => {
               }
             });
             setBestRouteIndex(recommendedIndex);
-          } else {
-            Alert.alert('Error', 'Unexpected data structure from directions service.');
+          } 
+          else {
+            // Display an alert if no routes are found
+            Alert.alert(
+              'No Routes Found',
+              'No walkable routes found, please try a different location.'
+            );
           }
         })
         .catch((error) => {
-          console.error('Error fetching directions:', error);
-          Alert.alert('Error', 'Failed to fetch directions. Please try again.');
+          // Display an alert if no routes are found
+          Alert.alert(
+            'No Routes Found',
+            'No walkable routes found, please try a different location.'
+          );
         });
     }
   }, [destination, currentLocation]);
@@ -258,7 +290,9 @@ const RouteScreen = () => {
         onPress={handleStartNavigation}
         disabled={selectedRouteIndex === null}
       >
-        <Text style={styles(isDarkTheme).startNavigationButtonText}>Start Navigation</Text>
+        <Text style={styles(isDarkTheme).startNavigationButtonText}>
+          {selectedRouteIndex === null ? 'Select a Path' : 'Start Navigation'}
+        </Text>
       </TouchableOpacity>
     </View>
   );
