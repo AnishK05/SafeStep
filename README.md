@@ -1,10 +1,8 @@
 # Welcome to SafeStep: Your Personal Safety Companion for Urban Walking Routes
 
-SafeStep is a safety-focused navigation app that provides users with safer walking routes in urban areas. By leveraging crowdsourced data, real-time updates, and safety flags, SafeStep empowers users to make informed decisions about their routes, ensuring peace of mind while walking.
+SafeStep is a safety-focused navigation app that provides users with safer walking routes in urban areas. By leveraging crowd-sourced data, real-time updates, and safety flags, SafeStep empowers users to make informed decisions about their routes, ensuring peace of mind while walking.
 
 <img src="/app/assets/images/homepage.jpg" alt="SafeStep Intro" width="200"/>
-
----
 
 ## Motivation
 
@@ -15,8 +13,6 @@ Recent studies reveal a growing concern for personal safety during routine activ
 - **66% of adults** report avoiding activities such as walking or visiting parks due to safety fears
 
 These statistics demonstrate a clear need for a tool that prioritizes personal safety in urban environments. SafeStep addresses this gap by equipping users with reliable safety data, route options, and real-time insights to navigate confidently.
-
----
 
 ## Key Features
 
@@ -41,8 +37,6 @@ These statistics demonstrate a clear need for a tool that prioritizes personal s
    - Save frequently used routes in the **Favorites screen**
    - Access a quick **alert button** in the Profile screen to contact friends for minor emergencies
 
----
-
 ## Technologies Used
 
 - **Frontend:** React Native for cross-platform user experience
@@ -50,10 +44,6 @@ These statistics demonstrate a clear need for a tool that prioritizes personal s
 - **Mapping API:** Google Maps API for advanced navigation and route rendering
 - **Location & Voice APIs:** Expo Speech for accurate turn-by-turn voice guidance
 
----
+## Demo Video and Pitch
 
-## Demo Video and Pitch 
-
-[Click here to view the demo video](#)
-
-[Click here to view our pitch](#)
+[Click here to view our pitch and demo](https://www.canva.com/design/DAGcJvkNqq8/hr4vQjfoa2gbbW1RMkV3GQ/edit?utm_content=DAGcJvkNqq8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
